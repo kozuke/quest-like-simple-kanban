@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --royal-blue: #0d41ff;
+  --gold: #d5a100;
+  --slate: #282b30;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.font-pixel {
+  font-family: 'Press Start 2P', 'DotGothic16', sans-serif;
+}
+
+.bg-royal-blue {
+  background-color: var(--royal-blue);
+}
+
+.bg-gold {
+  background-color: var(--gold);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Card hover animation */
+.cursor-grab:hover {
+  animation: hover-bounce 0.3s ease-in-out;
+}
+
+@keyframes hover-bounce {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+  100% { transform: translateY(0); }
+}
