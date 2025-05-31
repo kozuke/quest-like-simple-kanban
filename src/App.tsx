@@ -3,12 +3,14 @@ import Header from './components/Header';
 import Board from './components/Board';
 import ReportModal from './components/ReportModal';
 import TemplateEditorModal from './components/TemplateEditorModal';
+import TermsOfService from './components/TermsOfService';
 import { useTaskStore } from './store/useTaskStore';
 import { useReportStore } from './store/useReportStore';
 
 function App() {
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const [templateModalOpen, setTemplateModalOpen] = useState(false);
+  const [showTermsOfService, setShowTermsOfService] = useState(false);
   const { loadFromLocalStorage } = useTaskStore();
   const { loadTemplate } = useReportStore();
 
@@ -24,14 +26,19 @@ function App() {
     document.head.appendChild(pixelFont);
 
     // Update document title
-    document.title = 'Doragon Task | Local First Kanban Board';
+    document.title = 'Dragon Task | Local First Kanban Board';
   }, [loadFromLocalStorage, loadTemplate]);
+
+  if (showTermsOfService) {
+    return <TermsOfService onBack={() => setShowTermsOfService(false)} />;
+  }
 
   return (
     <div className="flex flex-col h-screen bg-slate-50">
       <Header 
         openReportModal={() => setReportModalOpen(true)}
         openTemplateModal={() => setTemplateModalOpen(true)}
+        openTermsOfService={() => setShowTermsOfService(true)}
       />
       
       <main className="flex-1 overflow-hidden">
