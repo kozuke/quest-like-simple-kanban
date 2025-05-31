@@ -1,6 +1,13 @@
 import { create } from 'zustand';
 import { nanoid } from 'nanoid';
 import { Task, TaskStatus, TaskStore } from '../types/task';
+import { 
+  validateAndSanitizeTask, 
+  validateAndSanitizeColumnOrder, 
+  safeJsonParse, 
+  checkLocalStorageQuota,
+  sanitizeForXSS
+} from '../utils/security';
 
 const STORAGE_KEY = 'kanban-tasks';
 
@@ -13,11 +20,20 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   },
 
   addTask: (title, description = '', status = 'backlog') => {
+    // 入力データをサニタイズ
+    const sanitizedTitle = sanitizeForXSS(title);
+    const sanitizedDescription = sanitizeForXSS(description);
+    
+    if (!sanitizedTitle.trim()) {
+      console.warn('タスクのタイトルが空です');
+      return;
+    }
+
     const id = nanoid();
     const newTask: Task = {
       id,
-      title,
-      description,
+      title: sanitizedTitle,
+      description: sanitizedDescription,
       createdAt: Date.now(),
       status,
     };
@@ -38,7 +54,16 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       const task = state.tasks[id];
       if (!task) return state;
 
-      const updatedTask = { ...task, ...updates };
+      // 更新データをサニタイズ
+      const sanitizedUpdates = { ...updates };
+      if (sanitizedUpdates.title) {
+        sanitizedUpdates.title = sanitizeForXSS(sanitizedUpdates.title);
+      }
+      if (sanitizedUpdates.description) {
+        sanitizedUpdates.description = sanitizeForXSS(sanitizedUpdates.description);
+      }
+
+      const updatedTask = { ...task, ...sanitizedUpdates };
       return { tasks: { ...state.tasks, [id]: updatedTask } };
     });
   },
@@ -103,8 +128,18 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
   saveToLocalStorage: () => {
     const { tasks, columnOrder } = get();
+    
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ tasks, columnOrder }));
+      const dataToSave = JSON.stringify({ tasks, columnOrder });
+      
+      // ストレージ容量をチェック
+      if (!checkLocalStorageQuota(STORAGE_KEY, dataToSave)) {
+        console.error('LocalStorage容量が不足しています');
+        return;
+      }
+      
+      localStorage.setItem(STORAGE_KEY, dataToSave);
+      console.log('データが正常に保存されました');
     } catch (error) {
       console.error('Failed to save to localStorage:', error);
     }
@@ -113,12 +148,45 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   loadFromLocalStorage: () => {
     try {
       const savedData = localStorage.getItem(STORAGE_KEY);
-      if (savedData) {
-        const { tasks, columnOrder } = JSON.parse(savedData);
-        set({ tasks, columnOrder });
+      if (!savedData) {
+        console.log('保存されたデータが見つかりません');
+        return;
       }
+
+      // 安全にJSONをパース
+      const parsedData = safeJsonParse(savedData);
+      if (!parsedData) {
+        console.error('保存されたデータが破損しています');
+        return;
+      }
+
+      // データを検証とサニタイズ
+      const sanitizedTasks: Record<string, Task> = {};
+      if (parsedData.tasks && typeof parsedData.tasks === 'object') {
+        for (const [taskId, taskData] of Object.entries(parsedData.tasks)) {
+          const sanitizedTask = validateAndSanitizeTask(taskData);
+          if (sanitizedTask && sanitizedTask.id) {
+            sanitizedTasks[taskId] = sanitizedTask;
+          }
+        }
+      }
+
+      const sanitizedColumnOrder = validateAndSanitizeColumnOrder(parsedData.columnOrder);
+
+      // サニタイズされたデータのみを設定
+      set({ 
+        tasks: sanitizedTasks, 
+        columnOrder: sanitizedColumnOrder 
+      });
+      
+      console.log('データが正常に読み込まれました');
     } catch (error) {
       console.error('Failed to load from localStorage:', error);
+      // エラーの場合はデフォルト状態にリセット
+      set({ 
+        tasks: {}, 
+        columnOrder: { backlog: [], doing: [], done: [] } 
+      });
     }
   },
 }));

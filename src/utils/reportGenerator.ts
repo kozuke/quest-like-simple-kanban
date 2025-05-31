@@ -1,4 +1,5 @@
 import { Task, TaskStatus } from '../types/task';
+import { escapeHtml, sanitizeText } from './security';
 
 interface ReportContext {
   date: string;
@@ -12,31 +13,60 @@ export function generateReport(
   columnOrder: Record<TaskStatus, string[]>,
   template: string
 ): string {
-  const today = new Date();
-  const dateStr = today.toLocaleDateString('ja-JP', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).replace(/\//g, '-');
+  try {
+    const today = new Date();
+    const dateStr = today.toLocaleDateString('ja-JP', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).replace(/\//g, '-');
 
-  const backlogTasks = columnOrder.backlog.map(id => tasks[id]).filter(Boolean);
-  const doingTasks = columnOrder.doing.map(id => tasks[id]).filter(Boolean);
-  const doneTasks = columnOrder.done.map(id => tasks[id]).filter(Boolean);
+    // タスクデータをセキュリティチェック付きで取得
+    const backlogTasks = columnOrder.backlog
+      .map(id => tasks[id])
+      .filter(Boolean)
+      .map(sanitizeTaskForReport);
+    
+    const doingTasks = columnOrder.doing
+      .map(id => tasks[id])
+      .filter(Boolean)
+      .map(sanitizeTaskForReport);
+    
+    const doneTasks = columnOrder.done
+      .map(id => tasks[id])
+      .filter(Boolean)
+      .map(sanitizeTaskForReport);
 
-  const context: ReportContext = {
-    date: dateStr,
-    backlog: backlogTasks,
-    doing: doingTasks,
-    done: doneTasks,
+    const context: ReportContext = {
+      date: sanitizeText(dateStr),
+      backlog: backlogTasks,
+      doing: doingTasks,
+      done: doneTasks,
+    };
+
+    return renderTemplate(template, context);
+  } catch (error) {
+    console.error('Report generation error:', error);
+    return 'レポート生成中にエラーが発生しました。';
+  }
+}
+
+/**
+ * レポート用にタスクデータをサニタイズ
+ */
+function sanitizeTaskForReport(task: Task): Task {
+  return {
+    ...task,
+    title: sanitizeText(task.title),
+    description: task.description ? sanitizeText(task.description) : '',
   };
-
-  return renderTemplate(template, context);
 }
 
 function renderTemplate(template: string, context: ReportContext): string {
-  let result = template;
+  // テンプレート自体をサニタイズ
+  let result = sanitizeText(template);
 
-  // Replace simple variables
+  // Replace simple variables (エスケープ済み)
   result = result.replace(/{{date}}/g, context.date);
 
   // Handle sections for each status
@@ -57,6 +87,8 @@ function processSectionTags(template: string, sectionName: string, items: Task[]
     
     return items.map((item, index) => {
       let itemContent = content;
+      
+      // タスクのタイトルと説明を安全に挿入（既にサニタイズ済み）
       itemContent = itemContent.replace(/{{title}}/g, item.title);
       
       // Handle optional description
