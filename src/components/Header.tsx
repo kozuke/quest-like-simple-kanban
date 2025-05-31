@@ -40,7 +40,7 @@ const Header: React.FC<HeaderProps> = ({ openReportModal, openTemplateModal }) =
             alt="Quest Board Logo" 
             className="w-8 h-8 mr-3"
           />
-          <h1 className="text-2xl font-pixel">Doragon Task</h1>
+          <h1 className="text-2xl font-pixel">Dragon Task</h1>
         </div>
         
         <div className="flex items-center space-x-2">
