@@ -24,13 +24,7 @@ function App() {
     document.head.appendChild(pixelFont);
 
     // Update document title
-    document.title = 'ドラゴンタスク | ローカルファースト看板ボード';
-    
-    // Find favicon element and update it
-    const favicon = document.querySelector('link[rel="icon"]');
-    if (favicon) {
-      favicon.setAttribute('href', 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%230d41ff"><rect width="24" height="24" fill="%230d41ff"/><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="16" fill="white">🗺️</text></svg>');
-    }
+    document.title = 'Doragon Task | Local First Kanban Board';
   }, [loadFromLocalStorage, loadTemplate]);
 
   return (

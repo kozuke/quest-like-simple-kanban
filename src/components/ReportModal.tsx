@@ -33,15 +33,6 @@ const ReportModal: React.FC<ReportModalProps> = ({
       navigator.clipboard.writeText(textareaRef.current.value);
       setCopied(true);
       
-      // Play sound effect
-      try {
-        const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2412/2412-preview.mp3');
-        audio.volume = 0.3;
-        audio.play();
-      } catch (error) {
-        console.log('Audio playback failed:', error);
-      }
-      
       setTimeout(() => setCopied(false), 2000);
     }
   };
@@ -49,7 +40,9 @@ const ReportModal: React.FC<ReportModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]" 
+      style={{ zIndex: 9999 }}>
       <div className="bg-white rounded-lg w-full max-w-3xl mx-4 shadow-2xl overflow-hidden">
         <div className="bg-royal-blue text-white px-4 py-3 flex justify-between items-center">
           <h2 className="text-xl font-pixel">日報ジェネレーター</h2>

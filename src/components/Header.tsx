@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Save, FileText, Settings } from 'lucide-react';
 import { useTaskStore } from '../store/useTaskStore';
 
@@ -9,6 +9,9 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ openReportModal, openTemplateModal }) => {
   const { saveToLocalStorage } = useTaskStore();
+  const [isReportHovered, setIsReportHovered] = useState(false);
+  const [isSaveHovered, setIsSaveHovered] = useState(false);
+  const [isTemplateHovered, setIsTemplateHovered] = useState(false);
   
   const handleSave = () => {
     saveToLocalStorage();
@@ -24,31 +27,28 @@ const Header: React.FC<HeaderProps> = ({ openReportModal, openTemplateModal }) =
         saveNotification.classList.add('opacity-0');
       }, 2000);
     }
-    
-    // Optional: Play chime sound
-    try {
-      const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/1862/1862-preview.mp3');
-      audio.volume = 0.3;
-      audio.play();
-    } catch (error) {
-      console.log('Audio playback failed:', error);
-    }
   };
+
+
 
   return (
     <header className="bg-royal-blue text-white p-4 shadow-md">
       <div className="container mx-auto flex flex-wrap items-center justify-between">
         <div className="flex items-center">
-          <h1 className="text-2xl font-pixel">ドラゴンタスク</h1>
-          <span className="ml-2 text-sm bg-yellow-500 text-blue-900 px-2 py-0.5 rounded font-pixel">
-            v1.0
-          </span>
+          <img 
+            src="/quest-board-logo.svg" 
+            alt="Quest Board Logo" 
+            className="w-8 h-8 mr-3"
+          />
+          <h1 className="text-2xl font-pixel">Doragon Task</h1>
         </div>
         
         <div className="flex items-center space-x-2">
           <button
             onClick={openTemplateModal}
-            className="bg-blue-700 hover:bg-blue-800 text-white px-3 py-2 rounded flex items-center"
+            onMouseEnter={() => setIsTemplateHovered(true)}
+            onMouseLeave={() => setIsTemplateHovered(false)}
+            className={`bg-blue-700 ${isTemplateHovered ? 'bg-blue-800' : ''} transition-colors duration-200 text-white px-3 py-2 rounded flex items-center`}
           >
             <Settings size={18} className="mr-1" />
             <span className="hidden sm:inline">テンプレート</span>
@@ -56,7 +56,9 @@ const Header: React.FC<HeaderProps> = ({ openReportModal, openTemplateModal }) =
           
           <button
             onClick={openReportModal}
-            className="bg-blue-700 hover:bg-blue-800 text-white px-3 py-2 rounded flex items-center"
+            onMouseEnter={() => setIsReportHovered(true)}
+            onMouseLeave={() => setIsReportHovered(false)}
+            className={`bg-blue-700 ${isReportHovered ? 'bg-blue-800' : ''} transition-colors duration-200 text-white px-3 py-2 rounded flex items-center`}
           >
             <FileText size={18} className="mr-1" />
             <span className="hidden sm:inline">日報</span>
@@ -64,7 +66,9 @@ const Header: React.FC<HeaderProps> = ({ openReportModal, openTemplateModal }) =
           
           <button
             onClick={handleSave}
-            className="bg-gold hover:bg-yellow-600 text-blue-900 font-semibold px-3 py-2 rounded flex items-center"
+            onMouseEnter={() => setIsSaveHovered(true)}
+            onMouseLeave={() => setIsSaveHovered(false)}
+            className={`bg-gold ${isSaveHovered ? 'bg-yellow-600' : ''} transition-colors duration-200 text-blue-900 font-semibold px-3 py-2 rounded flex items-center`}
           >
             <Save size={18} className="mr-1" />
             <span>保存</span>
@@ -76,6 +80,7 @@ const Header: React.FC<HeaderProps> = ({ openReportModal, openTemplateModal }) =
       <div 
         id="save-notification" 
         className="fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded shadow-lg transition-opacity duration-300 opacity-0 z-50"
+        style={{ pointerEvents: 'none' }} // 透明時にマウスイベントをキャプチャしないようにする
       >
         タスクが保存されました ✓
       </div>

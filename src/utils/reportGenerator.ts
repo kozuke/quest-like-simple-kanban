@@ -55,7 +55,7 @@ function processSectionTags(template: string, sectionName: string, items: Task[]
   result = result.replace(hasItemsRegex, (_, content) => {
     if (items.length === 0) return '';
     
-    return items.map(item => {
+    return items.map((item, index) => {
       let itemContent = content;
       itemContent = itemContent.replace(/{{title}}/g, item.title);
       
@@ -65,6 +65,12 @@ function processSectionTags(template: string, sectionName: string, items: Task[]
         itemContent = itemContent.replace(/{{description}}/g, item.description);
       } else {
         itemContent = itemContent.replace(/{{#description}}([\s\S]*?){{\/description}}/g, '');
+      }
+      
+      // Ensure each item ends with a newline (except the last one)
+      itemContent = itemContent.trim();
+      if (index < items.length - 1) {
+        itemContent += '\n';
       }
       
       return itemContent;

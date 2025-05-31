@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+  <!-- Outer Shield Border -->
+  <rect x="16" y="16" width="224" height="224" fill="#000000"/>
+  <rect x="24" y="24" width="208" height="208" fill="#d5a100"/>
+  <rect x="32" y="32" width="192" height="192" fill="#000000"/>
+  <!-- Inner Panel Background -->
+  <rect x="40" y="40" width="176" height="176" fill="#0d41ff"/>
+  <!-- Divide into three vertical sections -->
+  <rect x="40" y="40" width="58.66" height="176" fill="#0d41ff"/>
+  <rect x="98.66" y="40" width="58.66" height="176" fill="#d5a100"/>
+  <rect x="157.32" y="40" width="58.68" height="176" fill="#3c4451"/>
+  <!-- Map Icon -->
+  <rect x="56" y="80" width="24" height="32" fill="#d5a100"/>
+  <rect x="64" y="88" width="8" height="8" fill="#0d41ff"/>
+  <rect x="72" y="96" width="8" height="8" fill="#0d41ff"/>
+  <!-- Sword Icon -->
+  <rect x="120" y="72" width="16" height="80" fill="#000000"/>
+  <rect x="112" y="152" width="32" height="8" fill="#000000"/>
+  <!-- Crown Icon -->
+  <rect x="184" y="120" width="24" height="16" fill="#d5a100"/>
+  <rect x="188" y="112" width="4" height="8" fill="#d5a100"/>
+  <rect x="196" y="104" width="4" height="16" fill="#d5a100"/>
+  <rect x="204" y="112" width="4" height="8" fill="#d5a100"/>
+</svg>

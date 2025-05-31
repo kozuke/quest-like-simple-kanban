@@ -152,25 +152,27 @@ const Board: React.FC = () => {
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
-      <div className="flex gap-4 p-4 h-full overflow-x-auto">
-        <Column 
-          title="クエスト" 
-          emoji="🗺️" 
-          status="backlog" 
-          tasks={backlogTasks} 
-        />
-        <Column 
-          title="冒険中" 
-          emoji="⚔️" 
-          status="doing" 
-          tasks={doingTasks} 
-        />
-        <Column 
-          title="クリア" 
-          emoji="👑" 
-          status="done" 
-          tasks={doneTasks} 
-        />
+      <div className="flex justify-center items-start min-h-full px-4 py-6">
+        <div className="flex gap-6 max-w-7xl w-full justify-center">
+          <Column 
+            title="クエスト" 
+            emoji="🗺️" 
+            status="backlog" 
+            tasks={backlogTasks} 
+          />
+          <Column 
+            title="冒険中" 
+            emoji="⚔️" 
+            status="doing" 
+            tasks={doingTasks} 
+          />
+          <Column 
+            title="クリア" 
+            emoji="👑" 
+            status="done" 
+            tasks={doneTasks} 
+          />
+        </div>
       </div>
       
       <DragOverlay>
