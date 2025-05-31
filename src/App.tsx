@@ -29,6 +29,10 @@ function App() {
     document.title = 'Dragon Task | Local First Kanban Board';
   }, [loadFromLocalStorage, loadTemplate]);
 
+  const handleGithubClick = () => {
+    window.open('https://github.com/kozuke/quest-like-simple-kanban', '_blank', 'noopener,noreferrer');
+  };
+
   if (showTermsOfService) {
     return <TermsOfService onBack={() => setShowTermsOfService(false)} />;
   }
@@ -38,12 +42,30 @@ function App() {
       <Header 
         openReportModal={() => setReportModalOpen(true)}
         openTemplateModal={() => setTemplateModalOpen(true)}
-        openTermsOfService={() => setShowTermsOfService(true)}
       />
       
       <main className="flex-1 overflow-hidden">
         <Board />
       </main>
+      
+      {/* Footer */}
+      <footer className="bg-slate-100 border-t border-slate-200 py-2 px-4">
+        <div className="container mx-auto flex justify-center items-center space-x-6 text-xs text-slate-400">
+          <button
+            onClick={handleGithubClick}
+            className="hover:text-slate-600 transition-colors duration-200"
+          >
+            GitHub
+          </button>
+          <span className="text-slate-300">|</span>
+          <button
+            onClick={() => setShowTermsOfService(true)}
+            className="hover:text-slate-600 transition-colors duration-200"
+          >
+            利用規約
+          </button>
+        </div>
+      </footer>
       
       <ReportModal 
         isOpen={reportModalOpen} 

@@ -1,19 +1,17 @@
 import React, { useState } from 'react';
-import { Save, FileText, Settings, FileCheck } from 'lucide-react';
+import { Save, FileText, Settings } from 'lucide-react';
 import { useTaskStore } from '../store/useTaskStore';
 
 interface HeaderProps {
   openReportModal: () => void;
   openTemplateModal: () => void;
-  openTermsOfService: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ openReportModal, openTemplateModal, openTermsOfService }) => {
+const Header: React.FC<HeaderProps> = ({ openReportModal, openTemplateModal }) => {
   const { saveToLocalStorage } = useTaskStore();
   const [isReportHovered, setIsReportHovered] = useState(false);
   const [isSaveHovered, setIsSaveHovered] = useState(false);
   const [isTemplateHovered, setIsTemplateHovered] = useState(false);
-  const [isTermsHovered, setIsTermsHovered] = useState(false);
   
   const handleSave = () => {
     saveToLocalStorage();
@@ -44,16 +42,6 @@ const Header: React.FC<HeaderProps> = ({ openReportModal, openTemplateModal, ope
         </div>
         
         <div className="flex items-center space-x-2">
-          <button
-            onClick={openTermsOfService}
-            onMouseEnter={() => setIsTermsHovered(true)}
-            onMouseLeave={() => setIsTermsHovered(false)}
-            className={`bg-blue-700 ${isTermsHovered ? 'bg-blue-800' : ''} transition-colors duration-200 text-white px-3 py-2 rounded flex items-center`}
-          >
-            <FileCheck size={18} className="mr-1" />
-            <span className="hidden lg:inline">利用規約</span>
-          </button>
-          
           <button
             onClick={openTemplateModal}
             onMouseEnter={() => setIsTemplateHovered(true)}
