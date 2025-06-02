@@ -1,5 +1,123 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: false
 ---
+# セキュリティガイドライン
+
+## 🔒 クライアントサイドセキュリティ
+
+### XSS（Cross-Site Scripting）対策
+- **入力サニタイゼーション**: [src/utils/security.ts](mdc:src/utils/security.ts)を活用
+- **React標準**: JSXの自動エスケープを信頼
+- **dangerouslySetInnerHTML**: 使用禁止（特別な理由がない限り）
+
+### セキュリティユーティリティ
+```typescript
+// src/utils/security.ts の活用例
+import { sanitizeInput, validateTaskData } from '../utils/security'
+
+// ユーザー入力の安全な処理
+const safeTitle = sanitizeInput(userInput.title)
+const safeDescription = sanitizeInput(userInput.description)
+
+// データバリデーション
+if (!validateTaskData(taskData)) {
+  throw new Error('Invalid task data')
+}
+```
+
+## 💾 データ保護
+
+### localStorage セキュリティ
+- **データ暗号化**: 機密情報は暗号化（現在は平文）
+- **サイズ制限**: 5-10MB制限の考慮
+- **ドメイン分離**: Same-Origin Policyによる保護
+
+### プライバシー配慮
+- **ローカルファースト**: 外部サーバーへの送信なし
+- **トラッキング禁止**: アナリティクスや追跡機能なし
+- **最小権限**: 必要最小限のブラウザ機能のみ使用
+
+## 🌐 コンテンツセキュリティ
+
+### Content Security Policy (CSP)
+```html
+<!-- 推奨CSPヘッダー -->
+<meta http-equiv="Content-Security-Policy" 
+      content="default-src 'self'; 
+               script-src 'self' 'unsafe-inline'; 
+               style-src 'self' 'unsafe-inline' fonts.googleapis.com;
+               font-src 'self' fonts.gstatic.com;">
+```
+
+### 外部リソース管理
+- **フォント**: Google Fontsは信頼できるCDN
+- **ライブラリ**: npm経由の検証済みパッケージのみ
+- **画像**: ローカルアセットまたは信頼できるドメインのみ
+
+## 🔍 入力検証
+
+### タスクデータ検証
+```typescript
+interface TaskValidation {
+  title: string        // 1-100文字、HTMLタグ禁止
+  description?: string // 0-500文字、基本的なMarkdown許可
+  column: TaskColumn   // enum値のみ許可
+  priority?: number    // 1-5の整数のみ
+}
+
+// 検証例
+const validateTask = (task: unknown): task is TaskValidation => {
+  return (
+    typeof task === 'object' &&
+    task !== null &&
+    typeof (task as any).title === 'string' &&
+    (task as any).title.length > 0 &&
+    (task as any).title.length <= 100 &&
+    !/<[^>]*>/g.test((task as any).title) // HTMLタグ禁止
+  )
+}
+```
+
+### ファイルアップロード制限
+- **ファイル形式**: 現在は未実装（将来的に画像のみ許可）
+- **サイズ制限**: 1MB以下
+- **MIME検証**: 拡張子とMIMEタイプの整合性確認
+
+## 🚫 禁止事項
+
+### 危険な機能
+- **eval()**: JavaScript動的実行は禁止
+- **innerHTML**: XSSリスクのため基本的に禁止
+- **document.write()**: 使用禁止
+- **外部API呼び出し**: ローカルファーストの原則に反する
+
+### 開発時の注意点
+- **console.log**: 本番環境では削除
+- **デバッグ情報**: 個人情報の含まれるログ出力禁止
+- **エラーメッセージ**: 内部実装の詳細を露出しない
+
+## 🔧 セキュリティ監査
+
+### 定期チェック項目
+1. **依存関係**: `npm audit`でセキュリティ脆弱性確認
+2. **入力検証**: すべてのユーザー入力の適切な処理
+3. **出力エンコーディング**: HTMLエスケープの確認
+4. **ローカルストレージ**: 適切なデータ管理
+
+### 緊急時対応
+- **脆弱性発見時**: 即座に該当機能の無効化
+- **データ漏洩疑い**: localStorage内容の確認と必要に応じてクリア
+- **セキュリティアップデート**: 依存ライブラリの迅速な更新
+
+## 📋 セキュリティチェックリスト
+
+### 新機能実装時
+- [ ] ユーザー入力の適切なサニタイゼーション
+- [ ] XSS攻撃ベクターの確認
+- [ ] データバリデーションの実装
+- [ ] エラーハンドリングの適切な実装
+- [ ] ローカルストレージの安全な使用
+- [ ] 外部リソースの最小化
+- [ ] CSP準拠の確認

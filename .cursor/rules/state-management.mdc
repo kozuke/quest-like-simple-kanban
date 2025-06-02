@@ -1,5 +1,115 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: false
 ---
+# Zustand 状態管理ガイドライン
+
+## 🏪 ストア構成
+
+### メインストア
+- [useTaskStore.ts](mdc:src/store/useTaskStore.ts) - タスク管理の中核ストア
+- [useReportStore.ts](mdc:src/store/useReportStore.ts) - 日報生成・テンプレート管理
+- [useAudioStore.ts](mdc:src/store/useAudioStore.ts) - 効果音設定
+
+### ストア設計原則
+- **単一責任**: 各ストアは明確な責任を持つ
+- **イミュータブル**: 状態の直接変更禁止
+- **型安全**: TypeScriptの恩恵を最大活用
+
+## 📊 タスクストア（useTaskStore）
+
+### 状態構造
+```typescript
+interface TaskStore {
+  tasks: Task[]           // 全タスクリスト
+  savedState: boolean     // 保存状態フラグ
+  
+  // アクション
+  addTask: (task: Omit<Task, 'id'>) => void
+  updateTask: (id: string, updates: Partial<Task>) => void
+  deleteTask: (id: string) => void
+  moveTask: (id: string, newColumn: TaskColumn) => void
+  reorderTasks: (activeId: string, overId: string) => void
+  
+  // 永続化
+  saveToLocalStorage: () => void
+  loadFromLocalStorage: () => void
+}
+```
+
+### データ永続化ルール
+- **明示的保存**: ユーザーがSaveボタンを押したときのみ
+- **localStorage**: すべてのデータをブラウザ内に保存
+- **セキュリティ**: [src/utils/security.ts](mdc:src/utils/security.ts)でXSS対策
+
+## 📄 日報ストア（useReportStore）
+
+### テンプレート管理
+```typescript
+interface ReportStore {
+  template: string        // Mustacheテンプレート
+  lastGenerated: string   // 最後に生成された日報
+  
+  updateTemplate: (template: string) => void
+  generateReport: (tasks: Task[]) => string
+  copyToClipboard: (text: string) => Promise<void>
+}
+```
+
+### テンプレート例
+```mustache
+# 今日の作業報告（{{date}}）
+
+## 📋 完了したタスク
+{{#done}}
+- {{title}}{{#description}} - {{description}}{{/description}}
+{{/done}}
+
+## 🚀 進行中のタスク  
+{{#doing}}
+- {{title}}{{#description}} - {{description}}{{/description}}
+{{/doing}}
+
+## 📝 今後の予定
+{{#backlog}}
+- {{title}}{{#description}} - {{description}}{{/description}}
+{{/backlog}}
+```
+
+## 🔊 音声ストア（useAudioStore）
+
+### 効果音管理
+```typescript
+interface AudioStore {
+  enabled: boolean
+  volume: number
+  
+  playSound: (type: 'move' | 'complete' | 'add' | 'delete') => void
+  setEnabled: (enabled: boolean) => void
+  setVolume: (volume: number) => void
+}
+```
+
+## 🎯 使用パターン
+
+### コンポーネントでの使用
+```typescript
+import { useTaskStore } from '../store/useTaskStore'
+
+export const TaskCard = ({ task }: { task: Task }) => {
+  const { updateTask, deleteTask } = useTaskStore()
+  
+  // 状態の部分的な選択でパフォーマンス最適化
+  const savedState = useTaskStore(state => state.savedState)
+  
+  return (
+    // ... コンポーネント実装
+  )
+}
+```
+
+### ストア間の連携
+- **疎結合**: 直接的な依存は避ける
+- **イベント駆動**: 必要に応じてカスタムフックで橋渡し
+- **React Context**: 複雑な場合のみ検討

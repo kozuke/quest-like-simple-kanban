@@ -1,6 +1,6 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: false
 ---
 # Quest-like Simple Kanban プロジェクト概要
@@ -20,10 +20,10 @@ alwaysApply: false
 - **テンプレート**: Mustache（日報生成）
 
 ## 📁 主要ディレクトリ
-- [src/components/](mdc:src/components/) - Reactコンポーネント
-- [src/store/](mdc:src/store/) - Zustand状態管理
-- [src/types/](mdc:src/types/) - TypeScript型定義
-- [src/utils/](mdc:src/utils/) - ユーティリティ関数
+- [src/components/](mdc:src/components) - Reactコンポーネント
+- [src/store/](mdc:src/store) - Zustand状態管理
+- [src/types/](mdc:src/types) - TypeScript型定義
+- [src/utils/](mdc:src/utils) - ユーティリティ関数
 
 ## 🎮 RPGテーマ要素
 - **レーン名**: クエスト（Backlog）→ 冒険中（Doing）→ クリア（Done）
