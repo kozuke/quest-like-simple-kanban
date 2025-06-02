@@ -15,7 +15,11 @@ import TaskCard from './TaskCard';
 import { useTaskStore } from '../store/useTaskStore';
 import { Task, TaskStatus } from '../types/task';
 
-const Board: React.FC = () => {
+interface BoardProps {
+  openAddTaskModal: (status?: TaskStatus) => void;
+}
+
+const Board: React.FC<BoardProps> = ({ openAddTaskModal }) => {
   const { tasks, columnOrder, moveTask, reorderColumn } = useTaskStore();
   const [activeTask, setActiveTask] = React.useState<Task | null>(null);
   
@@ -117,18 +121,21 @@ const Board: React.FC = () => {
             emoji="🗺️" 
             status="backlog" 
             tasks={backlogTasks} 
+            openAddTaskModal={openAddTaskModal}
           />
           <Column 
             title="冒険中" 
             emoji="⚔️" 
             status="doing" 
             tasks={doingTasks} 
+            openAddTaskModal={openAddTaskModal}
           />
           <Column 
             title="クリア" 
             emoji="👑" 
             status="done" 
             tasks={doneTasks} 
+            openAddTaskModal={openAddTaskModal}
           />
         </div>
       </div>

@@ -3,16 +3,20 @@ import Header from './components/Header';
 import Board from './components/Board';
 import ReportModal from './components/ReportModal';
 import TemplateEditorModal from './components/TemplateEditorModal';
+import AddTaskModal from './components/AddTaskModal';
 import TermsOfService from './components/TermsOfService';
 import { useTaskStore } from './store/useTaskStore';
 import { useReportStore } from './store/useReportStore';
 import { useAudioStore } from './store/useAudioStore';
+import { TaskStatus } from './types/task';
 
 function App() {
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const [templateModalOpen, setTemplateModalOpen] = useState(false);
+  const [addTaskModalOpen, setAddTaskModalOpen] = useState(false);
+  const [addTaskStatus, setAddTaskStatus] = useState<TaskStatus>('backlog');
   const [showTermsOfService, setShowTermsOfService] = useState(false);
-  const { loadFromLocalStorage } = useTaskStore();
+  const { loadFromLocalStorage, addTask } = useTaskStore();
   const { loadTemplate } = useReportStore();
   const { loadFromLocalStorage: loadAudioSettings } = useAudioStore();
 
@@ -30,10 +34,44 @@ function App() {
 
     // Update document title
     document.title = 'Dragon Task | Local First Kanban Board';
-  }, [loadFromLocalStorage, loadTemplate, loadAudioSettings]);
+
+    // Keyboard shortcut listener
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Command+K (Mac) or Ctrl+K (Windows/Linux)
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        // Don't open if other modals are open or if user is typing in an input
+        if (!reportModalOpen && !templateModalOpen && !showTermsOfService) {
+          const activeElement = document.activeElement;
+          const isInputFocused = activeElement && (
+            activeElement.tagName === 'INPUT' || 
+            activeElement.tagName === 'TEXTAREA' || 
+            activeElement.hasAttribute('contenteditable')
+          );
+          
+          if (!isInputFocused) {
+            setAddTaskStatus('backlog'); // デフォルトはバックログ
+            setAddTaskModalOpen(true);
+          }
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [loadFromLocalStorage, loadTemplate, loadAudioSettings, reportModalOpen, templateModalOpen, showTermsOfService]);
 
   const handleGithubClick = () => {
     window.open('https://github.com/kozuke/quest-like-simple-kanban', '_blank', 'noopener,noreferrer');
+  };
+
+  const handleSaveTask = (title: string, description: string) => {
+    addTask(title, description, addTaskStatus);
+  };
+
+  const openAddTaskModal = (status: TaskStatus = 'backlog') => {
+    setAddTaskStatus(status);
+    setAddTaskModalOpen(true);
   };
 
   if (showTermsOfService) {
@@ -48,7 +86,7 @@ function App() {
       />
       
       <main className="flex-1 overflow-hidden">
-        <Board />
+        <Board openAddTaskModal={openAddTaskModal} />
       </main>
       
       {/* Footer */}
@@ -67,6 +105,13 @@ function App() {
           >
             利用規約
           </button>
+          <span className="text-slate-300">|</span>
+          <span 
+            className="text-slate-400 font-mono text-xs"
+            title="Command+K (Mac) または Ctrl+K でタスク作成"
+          >
+            ⌘K / Ctrl+K
+          </span>
         </div>
       </footer>
       
@@ -82,6 +127,13 @@ function App() {
       <TemplateEditorModal
         isOpen={templateModalOpen}
         onClose={() => setTemplateModalOpen(false)}
+      />
+
+      <AddTaskModal
+        isOpen={addTaskModalOpen}
+        onClose={() => setAddTaskModalOpen(false)}
+        onSave={handleSaveTask}
+        status={addTaskStatus}
       />
     </div>
   );

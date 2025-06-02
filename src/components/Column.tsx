@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import {
   SortableContext,
@@ -6,28 +6,21 @@ import {
 } from '@dnd-kit/sortable';
 import { PlusCircle } from 'lucide-react';
 import TaskCard from './TaskCard';
-import AddTaskModal from './AddTaskModal';
 import { Task, TaskStatus } from '../types/task';
-import { useTaskStore } from '../store/useTaskStore';
 
 interface ColumnProps {
   title: string;
   emoji: string;
   status: TaskStatus;
   tasks: Task[];
+  openAddTaskModal: (status?: TaskStatus) => void;
 }
 
-const Column: React.FC<ColumnProps> = ({ title, emoji, status, tasks }) => {
-  const { addTask } = useTaskStore();
+const Column: React.FC<ColumnProps> = ({ title, emoji, status, tasks, openAddTaskModal }) => {
   const { setNodeRef } = useDroppable({ id: status });
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleAddTask = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleSaveTask = (title: string, description: string) => {
-    addTask(title, description, status);
+    openAddTaskModal(status);
   };
 
   // Column emoji backgrounds
@@ -80,13 +73,6 @@ const Column: React.FC<ColumnProps> = ({ title, emoji, status, tasks }) => {
           )}
         </SortableContext>
       </div>
-
-      <AddTaskModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSave={handleSaveTask}
-        status={status}
-      />
     </div>
   );
 };
