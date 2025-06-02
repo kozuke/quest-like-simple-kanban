@@ -1,7 +1,7 @@
 ---
-description:
-globs:
-alwaysApply: false
+description: 
+globs: 
+alwaysApply: true
 ---
 # 開発ワークフロー
 
@@ -35,10 +35,10 @@ npm run lint       # ESLintによるコード検査
 ## 📁 ファイル構成ルール
 
 ### 新機能追加時の手順
-1. **型定義**: [src/types/](mdc:src/types/)に型を追加
-2. **ストア**: [src/store/](mdc:src/store/)に状態管理を追加
-3. **コンポーネント**: [src/components/](mdc:src/components/)にUIコンポーネント作成
-4. **ユーティリティ**: [src/utils/](mdc:src/utils/)に共通ロジック追加
+1. **型定義**: [src/types/](mdc:src/types)に型を追加
+2. **ストア**: [src/store/](mdc:src/store)に状態管理を追加
+3. **コンポーネント**: [src/components/](mdc:src/components)にUIコンポーネント作成
+4. **ユーティリティ**: [src/utils/](mdc:src/utils)に共通ロジック追加
 
 ### 命名規則
 - **ファイル**: PascalCase（例：`TaskCard.tsx`）

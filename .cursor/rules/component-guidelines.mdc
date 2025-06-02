@@ -1,14 +1,14 @@
 ---
-description:
-globs:
-alwaysApply: false
+description: 
+globs: 
+alwaysApply: true
 ---
 # React コンポーネント開発ガイドライン
 
 ## 🧩 コンポーネント設計原則
 
 ### ファイル構造
-- **メインコンポーネント**: [src/components/](mdc:src/components/)以下に配置
+- **メインコンポーネント**: [src/components/](mdc:src/components)以下に配置
 - **命名規則**: PascalCase（例：`TaskCard.tsx`, `ReportModal.tsx`）
 - **1ファイル1コンポーネント**: 単一責任の原則を守る
 
@@ -39,7 +39,7 @@ const rpgStyles = {
 - **コントラスト**: WCAG AA準拠の色合いを使用
 
 ### 状態管理
-- **Zustand**: [src/store/](mdc:src/store/)のストアを使用
+- **Zustand**: [src/store/](mdc:src/store)のストアを使用
 - **ローカル状態**: useState/useReducerは最小限に
 - **イミュータブル**: 状態の直接変更は避ける
 
