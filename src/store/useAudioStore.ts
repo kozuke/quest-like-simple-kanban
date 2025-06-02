@@ -18,10 +18,10 @@ const volumeLevels: VolumeLevel[] = ['off', 'low', 'medium', 'high'];
 const getVolumeValue = (level: VolumeLevel): number => {
   switch (level) {
     case 'off': return 0;
-    case 'low': return 0.3;
-    case 'medium': return 0.6;
-    case 'high': return 1.0;
-    default: return 0.6;
+    case 'low': return 0.2;
+    case 'medium': return 0.4;
+    case 'high': return 0.6;
+    default: return 0.4;
   }
 };
 

@@ -12,6 +12,10 @@ const HTML_ESCAPE_MAP: Record<string, string> = {
   '/': '&#x2F;',
 };
 
+// XSSサニタイゼーション結果のキャッシュ
+const xssSanitizeCache = new Map<string, string>();
+const MAX_CACHE_SIZE = 1000; // キャッシュの最大サイズ
+
 /**
  * HTMLエスケープを行う
  * @param text エスケープする文字列
@@ -38,13 +42,18 @@ export const sanitizeText = (text: string): string => {
 };
 
 /**
- * JavaScriptの危険なパターンを検出・除去する
+ * JavaScriptの危険なパターンを検出・除去する（キャッシュ機能付き）
  * @param text チェックする文字列
  * @returns サニタイズされた文字列
  */
 export const sanitizeForXSS = (text: string): string => {
   if (typeof text !== 'string') {
     return '';
+  }
+
+  // キャッシュから結果を取得
+  if (xssSanitizeCache.has(text)) {
+    return xssSanitizeCache.get(text)!;
   }
   
   let sanitized = text;
@@ -61,6 +70,17 @@ export const sanitizeForXSS = (text: string): string => {
   
   // eval、Function等の危険な関数の除去
   sanitized = sanitized.replace(/\b(eval|Function|setTimeout|setInterval)\s*\(/gi, '');
+
+  // キャッシュサイズが上限に達したら、古いエントリを削除
+  if (xssSanitizeCache.size >= MAX_CACHE_SIZE) {
+    const firstKey = xssSanitizeCache.keys().next().value;
+    if (firstKey) {
+      xssSanitizeCache.delete(firstKey);
+    }
+  }
+
+  // 結果をキャッシュに保存
+  xssSanitizeCache.set(text, sanitized);
   
   return sanitized;
 };

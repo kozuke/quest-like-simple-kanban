@@ -12,6 +12,10 @@ import { playMoveSound, playFanfareSound, playAddTaskSound } from '../utils/audi
 
 const STORAGE_KEY = 'kanban-tasks';
 
+// デバウンス用の変数
+let saveTimeoutId: NodeJS.Timeout | null = null;
+const SAVE_DEBOUNCE_MS = 300; // 300ms後に保存実行
+
 export const useTaskStore = create<TaskStore>((set, get) => ({
   tasks: {},
   columnOrder: {
@@ -52,8 +56,8 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     // タスク追加音を再生
     playAddTaskSound();
 
-    // 自動保存
-    get().saveToLocalStorage();
+    // デバウンス保存
+    get().debouncedSave();
   },
 
   updateTask: (id, updates) => {
@@ -74,8 +78,8 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       return { tasks: { ...state.tasks, [id]: updatedTask } };
     });
 
-    // 自動保存
-    get().saveToLocalStorage();
+    // デバウンス保存
+    get().debouncedSave();
   },
 
   removeTask: (id) => {
@@ -92,8 +96,8 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       return { tasks: remainingTasks, columnOrder: updatedColumnOrder };
     });
 
-    // 自動保存
-    get().saveToLocalStorage();
+    // デバウンス保存
+    get().debouncedSave();
   },
 
   moveTask: (taskId, destination, index) => {
@@ -138,8 +142,8 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       };
     });
 
-    // 自動保存
-    get().saveToLocalStorage();
+    // デバウンス保存
+    get().debouncedSave();
   },
 
   reorderColumn: (status, newOrder) => {
@@ -150,8 +154,22 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       },
     }));
 
-    // 自動保存
-    get().saveToLocalStorage();
+    // デバウンス保存
+    get().debouncedSave();
+  },
+
+  // デバウンス機能付き保存メソッドを追加
+  debouncedSave: () => {
+    // 既存のタイマーをクリア
+    if (saveTimeoutId) {
+      clearTimeout(saveTimeoutId);
+    }
+    
+    // 新しいタイマーを設定
+    saveTimeoutId = setTimeout(() => {
+      get().saveToLocalStorage();
+      saveTimeoutId = null;
+    }, SAVE_DEBOUNCE_MS);
   },
 
   saveToLocalStorage: () => {

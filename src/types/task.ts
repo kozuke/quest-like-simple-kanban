@@ -22,6 +22,7 @@ export interface TaskStore {
   reorderColumn: (status: TaskStatus, newOrder: string[]) => void;
   saveToLocalStorage: () => void;
   loadFromLocalStorage: () => void;
+  debouncedSave: () => void;
 }
 
 export interface ReportTemplate {

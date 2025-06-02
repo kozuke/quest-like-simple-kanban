@@ -21,27 +21,19 @@ export function generateReport(
       day: '2-digit',
     }).replace(/\//g, '-');
 
-    // タスクデータをセキュリティチェック付きで取得
-    const backlogTasks = columnOrder.backlog
-      .map(id => tasks[id])
-      .filter(Boolean)
-      .map(sanitizeTaskForReport);
-    
-    const doingTasks = columnOrder.doing
-      .map(id => tasks[id])
-      .filter(Boolean)
-      .map(sanitizeTaskForReport);
-    
-    const doneTasks = columnOrder.done
-      .map(id => tasks[id])
-      .filter(Boolean)
-      .map(sanitizeTaskForReport);
+    // 一度だけタスクをマップして、各カラムのタスクを効率的に取得
+    const getTasksForColumn = (columnIds: string[]): Task[] => {
+      return columnIds
+        .map(id => tasks[id])
+        .filter(Boolean)
+        .map(sanitizeTaskForReport);
+    };
 
     const context: ReportContext = {
       date: sanitizeText(dateStr),
-      backlog: backlogTasks,
-      doing: doingTasks,
-      done: doneTasks,
+      backlog: getTasksForColumn(columnOrder.backlog),
+      doing: getTasksForColumn(columnOrder.doing),
+      done: getTasksForColumn(columnOrder.done),
     };
 
     return renderTemplate(template, context);
@@ -85,7 +77,10 @@ function processSectionTags(template: string, sectionName: string, items: Task[]
   result = result.replace(hasItemsRegex, (_, content) => {
     if (items.length === 0) return '';
     
-    return items.map((item, index) => {
+    // items.mapを最適化 - 一度のループでitemContentを生成
+    const itemContents: string[] = [];
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
       let itemContent = content;
       
       // タスクのタイトルと説明を安全に挿入（既にサニタイズ済み）
@@ -101,12 +96,14 @@ function processSectionTags(template: string, sectionName: string, items: Task[]
       
       // Ensure each item ends with a newline (except the last one)
       itemContent = itemContent.trim();
-      if (index < items.length - 1) {
+      if (i < items.length - 1) {
         itemContent += '\n';
       }
       
-      return itemContent;
-    }).join('');
+      itemContents.push(itemContent);
+    }
+    
+    return itemContents.join('');
   });
 
   // Handle ^section tags (for when no items exist)
