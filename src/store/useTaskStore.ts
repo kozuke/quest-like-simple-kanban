@@ -8,7 +8,7 @@ import {
   checkLocalStorageQuota,
   sanitizeForXSS
 } from '../utils/security';
-import { playMoveSound, playFanfareSound, playAddTaskSound } from '../utils/audio';
+import { playMoveSound, playFanfareSound, playAddTaskSound, playDeleteSound } from '../utils/audio';
 
 const STORAGE_KEY = 'kanban-tasks';
 
@@ -95,6 +95,9 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
       return { tasks: remainingTasks, columnOrder: updatedColumnOrder };
     });
+
+    // タスク削除音を再生
+    playDeleteSound();
 
     // デバウンス保存
     get().debouncedSave();

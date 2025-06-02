@@ -43,4 +43,19 @@ export const playAddTaskSound = () => {
   } catch (error) {
     console.log('タスク追加音の初期化に失敗しました:', error);
   }
+};
+
+export const playDeleteSound = () => {
+  try {
+    const volumeValue = useAudioStore.getState().getVolumeValue();
+    if (volumeValue === 0) return; // 音量が0の場合は再生しない
+    
+    const audio = new Audio('/delete.mp3');
+    audio.volume = volumeValue;
+    audio.play().catch(error => {
+      console.log('削除音の再生に失敗しました:', error);
+    });
+  } catch (error) {
+    console.log('削除音の初期化に失敗しました:', error);
+  }
 }; 

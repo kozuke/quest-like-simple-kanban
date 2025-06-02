@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Save } from 'lucide-react';
 import { TaskStatus } from '../types/task';
 
@@ -42,13 +43,13 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ isOpen, onClose, onSave, st
     done: 'クリア'
   };
 
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+  return createPortal(
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4">
       <div 
-        className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-auto"
+        className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-auto max-h-[90vh] flex flex-col"
         onKeyDown={handleKeyDown}
       >
-        <div className="p-6 border-b border-gray-200">
+        <div className="p-6 border-b border-gray-200 flex-shrink-0">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-pixel font-medium text-gray-900">
               新しいタスクを{statusLabels[status]}に追加
@@ -62,7 +63,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ isOpen, onClose, onSave, st
           </div>
         </div>
         
-        <div className="p-6 space-y-4">
+        <div className="p-6 space-y-4 flex-grow overflow-y-auto">
           <div>
             <label htmlFor="task-title" className="block text-sm font-medium text-gray-700 mb-2">
               タスク名 <span className="text-red-500">*</span>
@@ -101,7 +102,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ isOpen, onClose, onSave, st
           </div>
         </div>
         
-        <div className="p-6 border-t border-gray-200 flex justify-end space-x-3">
+        <div className="p-6 border-t border-gray-200 flex justify-end space-x-3 flex-shrink-0">
           <button
             onClick={handleClose}
             className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all duration-200"
@@ -118,7 +119,8 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ isOpen, onClose, onSave, st
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 
