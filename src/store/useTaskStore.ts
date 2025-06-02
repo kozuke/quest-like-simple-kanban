@@ -8,6 +8,7 @@ import {
   checkLocalStorageQuota,
   sanitizeForXSS
 } from '../utils/security';
+import { playMoveSound, playFanfareSound, playAddTaskSound } from '../utils/audio';
 
 const STORAGE_KEY = 'kanban-tasks';
 
@@ -47,6 +48,9 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
       return { tasks: updatedTasks, columnOrder: updatedColumnOrder };
     });
+
+    // タスク追加音を再生
+    playAddTaskSound();
 
     // 自動保存
     get().saveToLocalStorage();
@@ -114,6 +118,15 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
       // Update task status
       const updatedTask = { ...task, status: destination };
+
+      // 音声再生: クリア(done)ステージに移動する場合はファンファーレ、それ以外は移動音
+      if (destination === 'done' && sourceStatus !== 'done') {
+        // クリアステージに移動する場合
+        playFanfareSound();
+      } else if (sourceStatus !== destination) {
+        // 他のステージ間での移動の場合
+        playMoveSound();
+      }
 
       return {
         tasks: { ...state.tasks, [taskId]: updatedTask },

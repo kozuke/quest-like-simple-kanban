@@ -6,6 +6,7 @@ import TemplateEditorModal from './components/TemplateEditorModal';
 import TermsOfService from './components/TermsOfService';
 import { useTaskStore } from './store/useTaskStore';
 import { useReportStore } from './store/useReportStore';
+import { useAudioStore } from './store/useAudioStore';
 
 function App() {
   const [reportModalOpen, setReportModalOpen] = useState(false);
@@ -13,11 +14,13 @@ function App() {
   const [showTermsOfService, setShowTermsOfService] = useState(false);
   const { loadFromLocalStorage } = useTaskStore();
   const { loadTemplate } = useReportStore();
+  const { loadFromLocalStorage: loadAudioSettings } = useAudioStore();
 
   useEffect(() => {
     // Load saved data on mount
     loadFromLocalStorage();
     loadTemplate();
+    loadAudioSettings();
     
     // Add pixel font
     const pixelFont = document.createElement('link');
@@ -27,7 +30,7 @@ function App() {
 
     // Update document title
     document.title = 'Dragon Task | Local First Kanban Board';
-  }, [loadFromLocalStorage, loadTemplate]);
+  }, [loadFromLocalStorage, loadTemplate, loadAudioSettings]);
 
   const handleGithubClick = () => {
     window.open('https://github.com/kozuke/quest-like-simple-kanban', '_blank', 'noopener,noreferrer');
