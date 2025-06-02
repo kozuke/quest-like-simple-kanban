@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import {
   SortableContext,
@@ -6,6 +6,7 @@ import {
 } from '@dnd-kit/sortable';
 import { PlusCircle } from 'lucide-react';
 import TaskCard from './TaskCard';
+import AddTaskModal from './AddTaskModal';
 import { Task, TaskStatus } from '../types/task';
 import { useTaskStore } from '../store/useTaskStore';
 
@@ -19,13 +20,14 @@ interface ColumnProps {
 const Column: React.FC<ColumnProps> = ({ title, emoji, status, tasks }) => {
   const { addTask } = useTaskStore();
   const { setNodeRef } = useDroppable({ id: status });
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleAddTask = () => {
-    const taskTitle = prompt('タスク名を入力してください:');
-    if (taskTitle?.trim()) {
-      const description = prompt('説明 (任意):') || '';
-      addTask(taskTitle, description, status);
-    }
+    setIsModalOpen(true);
+  };
+
+  const handleSaveTask = (title: string, description: string) => {
+    addTask(title, description, status);
   };
 
   // Column emoji backgrounds
@@ -78,6 +80,13 @@ const Column: React.FC<ColumnProps> = ({ title, emoji, status, tasks }) => {
           )}
         </SortableContext>
       </div>
+
+      <AddTaskModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSaveTask}
+        status={status}
+      />
     </div>
   );
 };

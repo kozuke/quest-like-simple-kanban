@@ -66,7 +66,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="w-full mb-3 p-3 border border-gray-300/60 rounded-lg text-sm resize-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/40 transition-all"
+          className="w-full mb-3 p-3 border border-gray-300/60 rounded-lg font-pixel text-sm resize-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/40 transition-all"
           placeholder="説明 (任意)"
           rows={2}
         />
@@ -114,7 +114,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
         </div>
       </div>
       {task.description && (
-        <p className="text-gray-700 text-sm mt-2 leading-relaxed opacity-80">{task.description}</p>
+        <p className="font-pixel text-gray-700 text-sm mt-2 leading-relaxed opacity-80 whitespace-pre-wrap">{task.description}</p>
       )}
     </div>
   );
