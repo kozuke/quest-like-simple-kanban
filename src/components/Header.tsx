@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Save, FileText, Settings } from 'lucide-react';
-import { useTaskStore } from '../store/useTaskStore';
+import { FileText, Settings } from 'lucide-react';
 
 interface HeaderProps {
   openReportModal: () => void;
@@ -8,26 +7,8 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ openReportModal, openTemplateModal }) => {
-  const { saveToLocalStorage } = useTaskStore();
   const [isReportHovered, setIsReportHovered] = useState(false);
-  const [isSaveHovered, setIsSaveHovered] = useState(false);
   const [isTemplateHovered, setIsTemplateHovered] = useState(false);
-  
-  const handleSave = () => {
-    saveToLocalStorage();
-    
-    // Optional: Show a save confirmation
-    const saveNotification = document.getElementById('save-notification');
-    if (saveNotification) {
-      saveNotification.classList.remove('opacity-0');
-      saveNotification.classList.add('opacity-100');
-      
-      setTimeout(() => {
-        saveNotification.classList.remove('opacity-100');
-        saveNotification.classList.add('opacity-0');
-      }, 2000);
-    }
-  };
 
   return (
     <header className="bg-royal-blue text-white p-4 shadow-md">
@@ -61,26 +42,7 @@ const Header: React.FC<HeaderProps> = ({ openReportModal, openTemplateModal }) =
             <FileText size={18} className="mr-1" />
             <span className="hidden sm:inline">日報</span>
           </button>
-          
-          <button
-            onClick={handleSave}
-            onMouseEnter={() => setIsSaveHovered(true)}
-            onMouseLeave={() => setIsSaveHovered(false)}
-            className={`bg-gold ${isSaveHovered ? 'bg-yellow-600' : ''} transition-colors duration-200 text-blue-900 font-semibold px-3 py-2 rounded flex items-center`}
-          >
-            <Save size={18} className="mr-1" />
-            <span>保存</span>
-          </button>
         </div>
-      </div>
-      
-      {/* Save notification */}
-      <div 
-        id="save-notification" 
-        className="fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded shadow-lg transition-opacity duration-300 opacity-0 z-50"
-        style={{ pointerEvents: 'none' }} // 透明時にマウスイベントをキャプチャしないようにする
-      >
-        タスクが保存されました ✓
       </div>
     </header>
   );

@@ -47,6 +47,9 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
       return { tasks: updatedTasks, columnOrder: updatedColumnOrder };
     });
+
+    // 自動保存
+    get().saveToLocalStorage();
   },
 
   updateTask: (id, updates) => {
@@ -66,6 +69,9 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       const updatedTask = { ...task, ...sanitizedUpdates };
       return { tasks: { ...state.tasks, [id]: updatedTask } };
     });
+
+    // 自動保存
+    get().saveToLocalStorage();
   },
 
   removeTask: (id) => {
@@ -81,6 +87,9 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
       return { tasks: remainingTasks, columnOrder: updatedColumnOrder };
     });
+
+    // 自動保存
+    get().saveToLocalStorage();
   },
 
   moveTask: (taskId, destination, index) => {
@@ -115,6 +124,9 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         },
       };
     });
+
+    // 自動保存
+    get().saveToLocalStorage();
   },
 
   reorderColumn: (status, newOrder) => {
@@ -124,6 +136,9 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         [status]: newOrder,
       },
     }));
+
+    // 自動保存
+    get().saveToLocalStorage();
   },
 
   saveToLocalStorage: () => {

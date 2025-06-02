@@ -22,11 +22,13 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
     setNodeRef,
     transform,
     transition,
+    isDragging,
   } = useSortable({ id: task.id });
   
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+    opacity: isDragging ? 0.3 : 1,
   };
 
   const handleSave = () => {
