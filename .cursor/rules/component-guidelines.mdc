@@ -1,0 +1,56 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# React コンポーネント開発ガイドライン
+
+## 🧩 コンポーネント設計原則
+
+### ファイル構造
+- **メインコンポーネント**: [src/components/](mdc:src/components/)以下に配置
+- **命名規則**: PascalCase（例：`TaskCard.tsx`, `ReportModal.tsx`）
+- **1ファイル1コンポーネント**: 単一責任の原則を守る
+
+### 主要コンポーネント
+- [Header.tsx](mdc:src/components/Header.tsx) - ヘッダー、保存・日報ボタン
+- [Board.tsx](mdc:src/components/Board.tsx) - メインのKanbanボード
+- [Column.tsx](mdc:src/components/Column.tsx) - 各レーン（クエスト/冒険中/クリア）
+- [TaskCard.tsx](mdc:src/components/TaskCard.tsx) - 個別タスクカード
+- [ReportModal.tsx](mdc:src/components/ReportModal.tsx) - 日報生成モーダル
+- [TemplateEditorModal.tsx](mdc:src/components/TemplateEditorModal.tsx) - テンプレート編集
+
+## 🎨 UIデザインガイドライン
+
+### RPG風スタイリング
+```typescript
+// RPGテーマのTailwindクラス例
+const rpgStyles = {
+  card: "bg-slate-700 border-2 border-yellow-400 rounded-lg shadow-lg",
+  button: "bg-blue-600 hover:bg-blue-700 text-white font-bold",
+  header: "bg-gradient-to-r from-blue-900 to-purple-900",
+  text: "font-['Press_Start_2P'] text-sm"
+}
+```
+
+### アクセシビリティ
+- **キーボード操作**: ドラッグ&ドロップもキーボードで可能
+- **ARIA属性**: 適切なlabel、role、descriptionを設定
+- **コントラスト**: WCAG AA準拠の色合いを使用
+
+### 状態管理
+- **Zustand**: [src/store/](mdc:src/store/)のストアを使用
+- **ローカル状態**: useState/useReducerは最小限に
+- **イミュータブル**: 状態の直接変更は避ける
+
+## 🔧 開発ベストプラクティス
+
+### TypeScript
+- **厳密な型付け**: [src/types/task.ts](mdc:src/types/task.ts)の型を活用
+- **Props型定義**: interfaceで明確に定義
+- **Generic活用**: 再利用可能なコンポーネント作成
+
+### パフォーマンス
+- **React.memo**: 必要に応じて再レンダリング最適化
+- **useCallback/useMemo**: 重い計算の最適化
+- **遅延読み込み**: 大きなコンポーネントはlazy loading

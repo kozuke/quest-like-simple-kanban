@@ -1,0 +1,32 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Quest-like Simple Kanban プロジェクト概要
+
+このプロジェクトは、RPGクエスト風のUIを持つローカルファースト軽量Kanbanボードアプリケーションです。
+
+## 🎯 プロジェクトの目的
+- ブラウザのlocalStorageを使用したオフライン完結型タスク管理
+- 明示的な保存による完全ユーザー制御
+- ドラゴンクエスト風の楽しいUI要素でタスク管理をゲーム化
+
+## 🏗 アーキテクチャ
+- **フロントエンド**: React 18 + TypeScript + Vite
+- **状態管理**: Zustand（軽量ストア）
+- **UI/UX**: Tailwind CSS + RPG風テーマ
+- **DnD**: @dnd-kit（アクセシブルなドラッグ&ドロップ）
+- **テンプレート**: Mustache（日報生成）
+
+## 📁 主要ディレクトリ
+- [src/components/](mdc:src/components/) - Reactコンポーネント
+- [src/store/](mdc:src/store/) - Zustand状態管理
+- [src/types/](mdc:src/types/) - TypeScript型定義
+- [src/utils/](mdc:src/utils/) - ユーティリティ関数
+
+## 🎮 RPGテーマ要素
+- **レーン名**: クエスト（Backlog）→ 冒険中（Doing）→ クリア（Done）
+- **フォント**: Press Start 2P/DotGothic16
+- **カラーパレット**: ロイヤルブルー、ゴールド、スレートグレー
+- **効果音**: 8-bit風のインタラクション音

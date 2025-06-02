@@ -1,0 +1,121 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# 開発ワークフロー
+
+## 🚀 セットアップ & 起動
+
+### 初回セットアップ
+```bash
+npm install
+npm run dev
+```
+
+### 開発サーバー
+- **URL**: http://localhost:5173
+- **ホットリロード**: ファイル変更時自動反映
+- **Vite**: 高速なHMR（Hot Module Replacement）
+
+## 🔧 開発ツール
+
+### コード品質
+- **ESLint**: [eslint.config.js](mdc:eslint.config.js) - コード静的解析
+- **TypeScript**: 厳密な型チェック
+- **Prettier**: コードフォーマット（推奨）
+
+### ビルド・デプロイ
+```bash
+npm run build      # 本番ビルド
+npm run preview    # ビルド結果の確認
+npm run lint       # ESLintによるコード検査
+```
+
+## 📁 ファイル構成ルール
+
+### 新機能追加時の手順
+1. **型定義**: [src/types/](mdc:src/types/)に型を追加
+2. **ストア**: [src/store/](mdc:src/store/)に状態管理を追加
+3. **コンポーネント**: [src/components/](mdc:src/components/)にUIコンポーネント作成
+4. **ユーティリティ**: [src/utils/](mdc:src/utils/)に共通ロジック追加
+
+### 命名規則
+- **ファイル**: PascalCase（例：`TaskCard.tsx`）
+- **変数・関数**: camelCase（例：`updateTask`）
+- **定数**: UPPER_SNAKE_CASE（例：`DEFAULT_TEMPLATE`）
+- **型・インターフェース**: PascalCase（例：`Task`, `TaskColumn`）
+
+## 🎨 RPGテーマ開発
+
+### デザインシステム
+```typescript
+// カラーパレット
+const colors = {
+  primary: {
+    royal: '#1e3a8a',    // ロイヤルブルー
+    gold: '#fbbf24',     // ゴールド
+    slate: '#334155'     // スレートグレー
+  },
+  rpg: {
+    health: '#ef4444',   // HP赤
+    mana: '#3b82f6',     // MP青
+    exp: '#10b981'       // EXP緑
+  }
+}
+
+// フォント
+const fonts = {
+  retro: "font-['Press_Start_2P']",
+  gothic: "font-['DotGothic16']"
+}
+```
+
+### 効果音実装
+- **Web Audio API**: [src/utils/audio.ts](mdc:src/utils/audio.ts)
+- **8-bit風サウンド**: ドラッグ、完了、削除時の効果音
+- **ユーザー設定**: ON/OFF切り替え可能
+
+## 🧪 テスト戦略
+
+### 手動テスト項目
+- **タスクCRUD**: 作成、読み取り、更新、削除
+- **ドラッグ&ドロップ**: レーン間移動、並び替え
+- **データ永続化**: 保存、読み込み、リロード後確認
+- **日報生成**: テンプレート編集、生成、コピー
+
+### ブラウザ対応
+- **Chrome**: 最新版（推奨）
+- **Firefox**: 最新版
+- **Safari**: 最新版
+- **Edge**: 最新版
+
+## 📱 レスポンシブ対応
+
+### ブレークポイント
+```css
+/* Tailwind CSS ブレークポイント */
+sm: 640px   /* スマートフォン横 */
+md: 768px   /* タブレット */
+lg: 1024px  /* デスクトップ */
+xl: 1280px  /* 大画面 */
+```
+
+### モバイル最適化
+- **タッチ操作**: ドラッグ&ドロップのタッチ対応
+- **viewport**: 適切なメタタグ設定
+- **フォントサイズ**: 読みやすいサイズ調整
+
+## 🐛 デバッグ・トラブルシューティング
+
+### よくある問題
+1. **localStorage復元エラー**: ブラウザキャッシュクリア
+2. **ドラッグ&ドロップ不動作**: @dnd-kitバージョン確認
+3. **フォント読み込み失敗**: CDN接続確認
+4. **効果音再生不可**: ブラウザのオーディオポリシー確認
+
+### 開発者ツール活用
+- **React Developer Tools**: コンポーネント状態確認
+- **Redux DevTools**: Zustand状態管理デバッグ
+- **Network**: API/リソース読み込み確認
+- **Console**: ログ出力とエラー確認
