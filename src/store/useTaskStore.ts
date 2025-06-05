@@ -164,6 +164,46 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     get().debouncedSave();
   },
 
+  copyTask: (id) => {
+    set((state) => {
+      const originalTask = state.tasks[id];
+      if (!originalTask) return state;
+
+      // 新しいIDを生成
+      const newId = nanoid();
+      
+      // タスクを複製（タイトルに「のコピー」を追加）
+      const copiedTask: Task = {
+        ...originalTask,
+        id: newId,
+        title: sanitizeForXSS(`${originalTask.title}のコピー`),
+        createdAt: Date.now(),
+      };
+
+      // 元のタスクと同じステージに追加
+      const updatedTasks = { ...state.tasks, [newId]: copiedTask };
+      const currentColumn = state.columnOrder[originalTask.status];
+      const originalIndex = currentColumn.indexOf(id);
+      
+      // 元のタスクの直後に挿入
+      const newColumn = [...currentColumn];
+      newColumn.splice(originalIndex + 1, 0, newId);
+
+      const updatedColumnOrder = {
+        ...state.columnOrder,
+        [originalTask.status]: newColumn,
+      };
+
+      return { tasks: updatedTasks, columnOrder: updatedColumnOrder };
+    });
+
+    // タスク追加音を再生
+    playAddTaskSound();
+
+    // デバウンス保存
+    get().debouncedSave();
+  },
+
   // デバウンス機能付き保存メソッドを追加
   debouncedSave: () => {
     // 既存のタイマーをクリア

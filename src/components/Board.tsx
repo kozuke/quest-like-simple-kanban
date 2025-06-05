@@ -22,7 +22,7 @@ interface BoardProps {
 }
 
 const Board: React.FC<BoardProps> = ({ openAddTaskModal, onEditTask, onDeleteTask }) => {
-  const { tasks, columnOrder, moveTask, reorderColumn } = useTaskStore();
+  const { tasks, columnOrder, moveTask, reorderColumn, copyTask } = useTaskStore();
   const [activeTask, setActiveTask] = React.useState<Task | null>(null);
   
   const sensors = useSensors(
@@ -126,6 +126,7 @@ const Board: React.FC<BoardProps> = ({ openAddTaskModal, onEditTask, onDeleteTas
             openAddTaskModal={openAddTaskModal}
             onEditTask={onEditTask}
             onDeleteTask={onDeleteTask}
+            onCopyTask={copyTask}
           />
           <Column 
             title="冒険中" 
@@ -135,6 +136,7 @@ const Board: React.FC<BoardProps> = ({ openAddTaskModal, onEditTask, onDeleteTas
             openAddTaskModal={openAddTaskModal}
             onEditTask={onEditTask}
             onDeleteTask={onDeleteTask}
+            onCopyTask={copyTask}
           />
           <Column 
             title="クリア" 
@@ -144,12 +146,13 @@ const Board: React.FC<BoardProps> = ({ openAddTaskModal, onEditTask, onDeleteTas
             openAddTaskModal={openAddTaskModal}
             onEditTask={onEditTask}
             onDeleteTask={onDeleteTask}
+            onCopyTask={copyTask}
           />
         </div>
       </div>
       
       <DragOverlay>
-        {activeTask ? <TaskCard task={activeTask} onEdit={onEditTask} onDelete={onDeleteTask} /> : null}
+        {activeTask ? <TaskCard task={activeTask} onEdit={onEditTask} onDelete={onDeleteTask} onCopy={copyTask} /> : null}
       </DragOverlay>
     </DndContext>
   );

@@ -16,9 +16,10 @@ interface ColumnProps {
   openAddTaskModal: (status?: TaskStatus) => void;
   onEditTask: (task: Task) => void;
   onDeleteTask: (taskId: string) => void;
+  onCopyTask: (taskId: string) => void;
 }
 
-const Column: React.FC<ColumnProps> = ({ title, emoji, status, tasks, openAddTaskModal, onEditTask, onDeleteTask }) => {
+const Column: React.FC<ColumnProps> = ({ title, emoji, status, tasks, openAddTaskModal, onEditTask, onDeleteTask, onCopyTask }) => {
   const { setNodeRef } = useDroppable({ id: status });
 
   const handleAddTask = () => {
@@ -70,6 +71,7 @@ const Column: React.FC<ColumnProps> = ({ title, emoji, status, tasks, openAddTas
               task={task} 
               onEdit={onEditTask}
               onDelete={onDeleteTask}
+              onCopy={onCopyTask}
             />
           ))}
           

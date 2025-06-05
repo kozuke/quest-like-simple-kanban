@@ -20,6 +20,7 @@ export interface TaskStore {
   removeTask: (id: string) => void;
   moveTask: (taskId: string, destination: TaskStatus, index: number) => void;
   reorderColumn: (status: TaskStatus, newOrder: string[]) => void;
+  copyTask: (id: string) => void;
   saveToLocalStorage: () => void;
   loadFromLocalStorage: () => void;
   debouncedSave: () => void;
