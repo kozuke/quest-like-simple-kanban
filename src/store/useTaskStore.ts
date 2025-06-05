@@ -1,90 +1,226 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Task, Column } from '../types/task';
+import { Task, TaskStatus, TaskStore } from '../types/task';
 import { useJourneyStore } from './useJourneyStore';
 import { useAudioStore } from './useAudioStore';
-
-interface TaskStore {
-  tasks: Task[];
-  draggedTask: Task | null;
-  setDraggedTask: (task: Task | null) => void;
-  addTask: (title: string, description: string, exp: number) => void;
-  deleteTask: (taskId: number) => void;
-  moveTask: (taskId: number, column: Column) => void;
-  updateTask: (taskId: number, title: string, description: string, exp: number) => void;
-  claimAllExp: () => void;
-}
 
 export const useTaskStore = create<TaskStore>()(
   persist(
     (set, get) => ({
-      tasks: [],
-      draggedTask: null,
-      setDraggedTask: (task) => set({ draggedTask: task }),
-      addTask: (title, description, exp) => {
-        const { playAddTaskSound } = useAudioStore.getState();
-        playAddTaskSound();
-        set((state) => ({
-          tasks: [
-            ...state.tasks,
-            {
-              id: Date.now(),
-              title,
-              description,
-              exp,
-              column: 'todo',
-              createdAt: new Date().toISOString(),
-            },
-          ],
-        }));
+      tasks: {},
+      columnOrder: {
+        backlog: [],
+        doing: [],
+        done: []
       },
-      deleteTask: (taskId) => {
+      
+      addTask: (title, description = '', status: TaskStatus = 'backlog') => {
+        const { playAddTaskSound } = useAudioStore.getState();
+        const taskId = crypto.randomUUID();
+        
+        playAddTaskSound();
+        
+        set((state) => {
+          const newTask: Task = {
+            id: taskId,
+            title,
+            description,
+            status,
+            createdAt: Date.now(),
+          };
+          
+          return {
+            tasks: {
+              ...state.tasks,
+              [taskId]: newTask
+            },
+            columnOrder: {
+              ...state.columnOrder,
+              [status]: [...state.columnOrder[status], taskId]
+            }
+          };
+        });
+      },
+      
+      updateTask: (id, updates) => {
+        set((state) => {
+          const task = state.tasks[id];
+          if (!task) return state;
+          
+          const updatedTask = {
+            ...task,
+            ...updates
+          };
+          
+          return {
+            tasks: {
+              ...state.tasks,
+              [id]: updatedTask
+            }
+          };
+        });
+      },
+      
+      removeTask: (id) => {
         const { playDeleteSound } = useAudioStore.getState();
         playDeleteSound();
-        set((state) => ({
-          tasks: state.tasks.filter((task) => task.id !== taskId),
-        }));
+        
+        set((state) => {
+          const task = state.tasks[id];
+          if (!task) return state;
+          
+          const { [id]: removed, ...remainingTasks } = state.tasks;
+          const newColumnOrder = {
+            ...state.columnOrder,
+            [task.status]: state.columnOrder[task.status].filter(taskId => taskId !== id)
+          };
+          
+          return {
+            tasks: remainingTasks,
+            columnOrder: newColumnOrder
+          };
+        });
       },
-      moveTask: (taskId, column) => {
+      
+      moveTask: (taskId, destination, index) => {
         const { playMoveSound } = useAudioStore.getState();
-        playMoveSound();
+        
+        set((state) => {
+          const task = state.tasks[taskId];
+          if (!task) return state;
+          
+          const sourceStatus = task.status;
+          if (sourceStatus === destination && 
+              state.columnOrder[sourceStatus].indexOf(taskId) === index) {
+            return state;
+          }
+          
+          playMoveSound();
+          
+          const newColumnOrder = {
+            ...state.columnOrder,
+            [sourceStatus]: state.columnOrder[sourceStatus].filter(id => id !== taskId),
+            [destination]: [
+              ...state.columnOrder[destination].slice(0, index),
+              taskId,
+              ...state.columnOrder[destination].slice(index)
+            ]
+          };
+          
+          return {
+            tasks: {
+              ...state.tasks,
+              [taskId]: {
+                ...task,
+                status: destination
+              }
+            },
+            columnOrder: newColumnOrder
+          };
+        });
+      },
+      
+      reorderColumn: (status, newOrder) => {
         set((state) => ({
-          tasks: state.tasks.map((task) =>
-            task.id === taskId ? { ...task, column } : task
-          ),
+          columnOrder: {
+            ...state.columnOrder,
+            [status]: newOrder
+          }
         }));
       },
-      updateTask: (taskId, title, description, exp) => {
-        set((state) => ({
-          tasks: state.tasks.map((task) =>
-            task.id === taskId ? { ...task, title, description, exp } : task
-          ),
-        }));
+      
+      copyTask: (id) => {
+        const { playAddTaskSound } = useAudioStore.getState();
+        
+        set((state) => {
+          const task = state.tasks[id];
+          if (!task) return state;
+          
+          const newId = crypto.randomUUID();
+          const newTask: Task = {
+            ...task,
+            id: newId,
+            createdAt: Date.now(),
+            expClaimed: false
+          };
+          
+          playAddTaskSound();
+          
+          return {
+            tasks: {
+              ...state.tasks,
+              [newId]: newTask
+            },
+            columnOrder: {
+              ...state.columnOrder,
+              [task.status]: [...state.columnOrder[task.status], newId]
+            }
+          };
+        });
       },
+      
+      claimExp: (taskId) => {
+        set((state) => {
+          const task = state.tasks[taskId];
+          if (!task) return state;
+          
+          return {
+            tasks: {
+              ...state.tasks,
+              [taskId]: {
+                ...task,
+                expClaimed: true
+              }
+            }
+          };
+        });
+      },
+      
       claimAllExp: () => {
         const { playFanfareSound } = useAudioStore.getState();
         const { addClearedTask } = useJourneyStore.getState();
-        const doneTasks = get().tasks.filter((task) => task.column === 'done');
         
-        // Only proceed if there are done tasks to process
-        if (doneTasks.length > 0) {
-          // Add validation to ensure task and title exist before processing
-          doneTasks.forEach((task) => {
-            if (task && typeof task.title === 'string') {
-              addClearedTask(task);
-            }
+        let totalExp = 0;
+        
+        set((state) => {
+          const doneTasks = state.columnOrder.done
+            .map(id => state.tasks[id])
+            .filter(task => task && !task.expClaimed);
+          
+          if (doneTasks.length === 0) return state;
+          
+          // Add tasks to journey record and calculate total exp
+          doneTasks.forEach(task => {
+            addClearedTask(task);
           });
           
-          set((state) => ({
-            tasks: state.tasks.filter((task) => task.column !== 'done'),
-          }));
-          
           playFanfareSound();
-        }
+          
+          // Remove claimed tasks
+          const newTasks = { ...state.tasks };
+          doneTasks.forEach(task => {
+            delete newTasks[task.id];
+          });
+          
+          return {
+            tasks: newTasks,
+            columnOrder: {
+              ...state.columnOrder,
+              done: state.columnOrder.done.filter(id => !doneTasks.find(task => task.id === id))
+            }
+          };
+        });
+        
+        return totalExp;
       },
+      
+      debouncedSave: () => {
+        // This is handled automatically by the persist middleware
+      }
     }),
     {
       name: 'task-store',
+      version: 1
     }
   )
 );
