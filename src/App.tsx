@@ -5,6 +5,7 @@ import ReportModal from './components/ReportModal';
 import TemplateEditorModal from './components/TemplateEditorModal';
 import TaskEditorModal from './components/TaskEditorModal';
 import TermsOfService from './components/TermsOfService';
+import SlimeDashboard from './components/SlimeDashboard';
 import { useTaskStore } from './store/useTaskStore';
 import { useReportStore } from './store/useReportStore';
 import { useAudioStore } from './store/useAudioStore';
@@ -52,7 +53,7 @@ function App() {
           );
           
           if (!isInputFocused) {
-            setTaskEditorStatus('backlog'); // デフォルトはバックログ
+            setTaskEditorStatus('backlog');
             setTaskEditorMode('add');
             setEditingTask(undefined);
             setTaskEditorModalOpen(true);
@@ -106,12 +107,19 @@ function App() {
         openTemplateModal={() => setTemplateModalOpen(true)}
       />
       
-      <main className="flex-1 overflow-hidden">
-        <Board 
-          openAddTaskModal={openAddTaskModal}
-          onEditTask={openEditTaskModal}
-          onDeleteTask={handleTaskDelete}
-        />
+      <main className="flex-1 overflow-hidden p-4">
+        <div className="container mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6 h-full">
+          <div className="lg:col-span-3 overflow-hidden">
+            <Board 
+              openAddTaskModal={openAddTaskModal}
+              onEditTask={openEditTaskModal}
+              onDeleteTask={handleTaskDelete}
+            />
+          </div>
+          <div className="overflow-y-auto">
+            <SlimeDashboard />
+          </div>
+        </div>
       </main>
       
       {/* Footer */}
