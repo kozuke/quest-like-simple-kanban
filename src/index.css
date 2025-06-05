@@ -98,3 +98,23 @@ html, body {
   animation: sparkle 0.8s ease-in-out forwards;
   font-size: 2rem;
 }
+
+/* Evolution animation */
+@keyframes evolution {
+  0% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2) rotate(180deg);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1) rotate(360deg);
+    opacity: 1;
+  }
+}
+
+.animate-evolution {
+  animation: evolution 2s ease-in-out;
+}

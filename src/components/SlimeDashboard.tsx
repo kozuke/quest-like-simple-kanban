@@ -28,20 +28,28 @@ const SlimeDashboard: React.FC = () => {
   const [currentSlime, setCurrentSlime] = useState(1);
   const [nextGoal, setNextGoal] = useState(10);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [isEvolving, setIsEvolving] = useState(false);
+  const [previousSlime, setPreviousSlime] = useState(1);
 
   useEffect(() => {
     const total = Object.values(clearedTasks).reduce((sum, count) => sum + count, 0);
+    const newSlimeLevel = total >= 100 ? 5 
+                       : total >= 50 ? 4 
+                       : total >= 20 ? 3 
+                       : total >= 10 ? 2 
+                       : 1;
 
-    if (total >= 100) setCurrentSlime(5);
-    else if (total >= 50) setCurrentSlime(4);
-    else if (total >= 20) setCurrentSlime(3);
-    else if (total >= 10) setCurrentSlime(2);
-    else setCurrentSlime(1);
+    if (newSlimeLevel !== currentSlime) {
+      setPreviousSlime(currentSlime);
+      setCurrentSlime(newSlimeLevel);
+      setIsEvolving(true);
+      setTimeout(() => setIsEvolving(false), 2000);
+    }
 
     const goals = [10, 20, 50, 100];
     const next = goals.find(n => n > total) ?? Infinity;
     setNextGoal(next);
-  }, [clearedTasks]);
+  }, [clearedTasks, currentSlime]);
 
   const last7Days = Array.from({ length: 7 }, (_, i) => {
     const date = new Date();
@@ -125,11 +133,28 @@ const SlimeDashboard: React.FC = () => {
             </button>
           </div>
         </div>
-        <div className="flex justify-center mb-4">
+        <div className="relative flex justify-center mb-4">
+          {isEvolving && (
+            <>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="absolute">
+                  <div className="animate-sparkle absolute -top-8 -left-8">✨</div>
+                  <div className="animate-sparkle absolute -top-8 left-8">✨</div>
+                  <div className="animate-sparkle absolute top-8 -left-8">✨</div>
+                  <div className="animate-sparkle absolute top-8 left-8">✨</div>
+                </div>
+              </div>
+              <img 
+                src={`/slime_${previousSlime}.jpg`}
+                alt={`Level ${previousSlime} Slime`}
+                className="w-32 h-32 object-contain rounded-lg shadow-md opacity-50 absolute"
+              />
+            </>
+          )}
           <img 
             src={`/slime_${currentSlime}.jpg`} 
             alt={`Level ${currentSlime} Slime`}
-            className="w-32 h-32 object-contain rounded-lg shadow-md"
+            className={`w-32 h-32 object-contain rounded-lg shadow-md ${isEvolving ? 'animate-bounce' : ''}`}
           />
         </div>
         <p className="font-pixel text-lg text-gray-700 mb-2">
