@@ -23,3 +23,23 @@ dist-ssr
 *.sln
 *.sw?
 .env
+
+# Test outputs and reports
+# Vitest
+coverage/
+.vitest/
+vitest.config.ts.timestamp-*
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
+
+# Test screenshots and videos
+screenshots/
+videos/
+test-artifacts/
+
+# Coverage reports
+.nyc_output/
+coverage.lcov
