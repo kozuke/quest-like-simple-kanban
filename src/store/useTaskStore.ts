@@ -212,10 +212,6 @@ export const useTaskStore = create<TaskStore>()(
         });
         
         return totalExp;
-      },
-      
-      debouncedSave: () => {
-        // This is handled automatically by the persist middleware
       }
     }),
     {
