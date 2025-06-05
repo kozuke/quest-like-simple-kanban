@@ -196,6 +196,49 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     get().debouncedSave();
   },
 
+  claimAllExp: () => {
+    let claimedCount = 0;
+    
+    set((state) => {
+      const updatedTasks = { ...state.tasks };
+      const updatedColumnOrder = { ...state.columnOrder };
+      
+      // Find all unclaimed done tasks
+      const unclaimedDoneTasks = state.columnOrder.done
+        .map(id => state.tasks[id])
+        .filter(task => task && !task.expClaimed);
+      
+      // Update each task and remove it
+      unclaimedDoneTasks.forEach(task => {
+        if (task) {
+          claimedCount++;
+          delete updatedTasks[task.id];
+        }
+      });
+      
+      // Update done column to remove claimed tasks
+      updatedColumnOrder.done = state.columnOrder.done
+        .filter(id => !unclaimedDoneTasks.find(task => task.id === id));
+      
+      return {
+        tasks: updatedTasks,
+        columnOrder: updatedColumnOrder
+      };
+    });
+
+    // Add experience points for each claimed task
+    for (let i = 0; i < claimedCount; i++) {
+      useJourneyStore.getState().addClearedTask();
+    }
+
+    if (claimedCount > 0) {
+      playFanfareSound();
+      get().debouncedSave();
+    }
+
+    return claimedCount;
+  },
+
   debouncedSave: () => {
     if (saveTimeoutId) {
       clearTimeout(saveTimeoutId);

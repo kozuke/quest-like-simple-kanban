@@ -10,7 +10,8 @@ import {
   Legend
 } from 'chart.js';
 import { useJourneyStore } from '../store/useJourneyStore';
-import { RefreshCw } from 'lucide-react';
+import { useTaskStore } from '../store/useTaskStore';
+import { RefreshCw, Star } from 'lucide-react';
 
 ChartJS.register(
   CategoryScale,
@@ -23,6 +24,7 @@ ChartJS.register(
 
 const SlimeDashboard: React.FC = () => {
   const { clearedTasks, resetJourney } = useJourneyStore();
+  const { claimAllExp } = useTaskStore();
   const [currentSlime, setCurrentSlime] = useState(1);
   const [nextGoal, setNextGoal] = useState(10);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -94,18 +96,34 @@ const SlimeDashboard: React.FC = () => {
     setShowConfirm(false);
   };
 
+  const handleClaimAllExp = () => {
+    const claimedCount = claimAllExp();
+    if (claimedCount > 0) {
+      // Optional: Show a success message
+    }
+  };
+
   return (
     <div className="bg-white rounded-xl shadow-lg p-6 space-y-6">
       <div className="text-center">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-pixel text-gray-800">旅の記録</h2>
-          <button
-            onClick={handleResetClick}
-            className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-all duration-200"
-            title="記録をリセット"
-          >
-            <RefreshCw size={20} />
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={handleClaimAllExp}
+              className="p-2 text-yellow-500 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200"
+              title="全ての経験値を獲得"
+            >
+              <Star size={20} />
+            </button>
+            <button
+              onClick={handleResetClick}
+              className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-all duration-200"
+              title="記録をリセット"
+            >
+              <RefreshCw size={20} />
+            </button>
+          </div>
         </div>
         <div className="flex justify-center mb-4">
           <img 

@@ -6,7 +6,7 @@ export interface Task {
   description?: string;
   createdAt: number;
   status: TaskStatus;
-  expClaimed?: boolean;  // New field to track if exp has been claimed
+  expClaimed?: boolean;
 }
 
 export interface TaskStore {
@@ -22,7 +22,8 @@ export interface TaskStore {
   moveTask: (taskId: string, destination: TaskStatus, index: number) => void;
   reorderColumn: (status: TaskStatus, newOrder: string[]) => void;
   copyTask: (id: string) => void;
-  claimExp: (taskId: string) => void;  // New function to claim experience points
+  claimExp: (taskId: string) => void;
+  claimAllExp: () => number;
   saveToLocalStorage: () => void;
   loadFromLocalStorage: () => void;
   debouncedSave: () => void;
