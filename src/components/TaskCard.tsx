@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Pencil, Trash2, Copy, Star } from 'lucide-react';
@@ -13,6 +13,9 @@ interface TaskCardProps {
 }
 
 const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onCopy }) => {
+  const [isDisappearing, setIsDisappearing] = useState(false);
+  const { claimExp } = useTaskStore();
+  
   const {
     attributes,
     listeners,
@@ -22,8 +25,6 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onCopy }) =
     isDragging,
   } = useSortable({ id: task.id });
   
-  const { claimExp } = useTaskStore();
-
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -45,10 +46,34 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onCopy }) =
     onCopy(task.id);
   };
 
-  const handleClaimExp = (e: React.MouseEvent) => {
+  const handleClaimExp = async (e: React.MouseEvent) => {
     e.stopPropagation();
+    setIsDisappearing(true);
+    
+    // Wait for the animation to complete
+    await new Promise(resolve => setTimeout(resolve, 800));
+    
     claimExp(task.id);
+    onDelete(task.id);
   };
+
+  if (isDisappearing) {
+    return (
+      <div 
+        className="relative bg-white/95 backdrop-blur-sm border border-gray-200/60 p-4 rounded-xl shadow-md mb-3 animate-disappear"
+      >
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="animate-sparkle">✨</div>
+        </div>
+        <div className="opacity-0">
+          <h3 className="font-pixel text-gray-900 mb-2">{task.title}</h3>
+          {task.description && (
+            <p className="font-pixel text-gray-700 text-sm mt-2">{task.description}</p>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div 
