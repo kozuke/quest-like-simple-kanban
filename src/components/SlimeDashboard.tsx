@@ -9,7 +9,7 @@ import {
   Tooltip,
   Legend
 } from 'chart.js';
-import { useTaskStore } from '../store/useTaskStore';
+import { useJourneyStore } from '../store/useJourneyStore';
 
 ChartJS.register(
   CategoryScale,
@@ -21,24 +21,12 @@ ChartJS.register(
 );
 
 const SlimeDashboard: React.FC = () => {
-  const { tasks } = useTaskStore();
-  const [clearedTasks, setClearedTasks] = useState<Record<string, number>>({});
-  const [totalCleared, setTotalCleared] = useState(0);
+  const { clearedTasks } = useJourneyStore();
   const [currentSlime, setCurrentSlime] = useState(1);
   const [nextGoal, setNextGoal] = useState(10);
 
   useEffect(() => {
-    const tasksByDay: Record<string, number> = {};
-    Object.values(tasks).forEach(task => {
-      if (task.status === 'done' && task.expClaimed) {
-        const date = new Date(task.createdAt).toISOString().split('T')[0];
-        tasksByDay[date] = (tasksByDay[date] || 0) + 1;
-      }
-    });
-    setClearedTasks(tasksByDay);
-
-    const total = Object.values(tasksByDay).reduce((sum, count) => sum + count, 0);
-    setTotalCleared(total);
+    const total = Object.values(clearedTasks).reduce((sum, count) => sum + count, 0);
 
     if (total >= 100) setCurrentSlime(5);
     else if (total >= 50) setCurrentSlime(4);
@@ -49,7 +37,7 @@ const SlimeDashboard: React.FC = () => {
     const goals = [10, 20, 50, 100];
     const next = goals.find(n => n > total) ?? Infinity;
     setNextGoal(next);
-  }, [tasks]);
+  }, [clearedTasks]);
 
   const last7Days = Array.from({ length: 7 }, (_, i) => {
     const date = new Date();
@@ -93,6 +81,8 @@ const SlimeDashboard: React.FC = () => {
     }
   };
 
+  const totalCleared = Object.values(clearedTasks).reduce((sum, count) => sum + count, 0);
+
   return (
     <div className="bg-white rounded-xl shadow-lg p-6 space-y-6">
       <div className="text-center">
@@ -120,5 +110,3 @@ const SlimeDashboard: React.FC = () => {
     </div>
   );
 };
-
-export default SlimeDashboard;

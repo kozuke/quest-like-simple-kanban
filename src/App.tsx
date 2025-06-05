@@ -9,6 +9,7 @@ import SlimeDashboard from './components/SlimeDashboard';
 import { useTaskStore } from './store/useTaskStore';
 import { useReportStore } from './store/useReportStore';
 import { useAudioStore } from './store/useAudioStore';
+import { useJourneyStore } from './store/useJourneyStore';
 import { TaskStatus, Task } from './types/task';
 
 function App() {
@@ -22,11 +23,13 @@ function App() {
   const { loadFromLocalStorage, addTask, updateTask, removeTask } = useTaskStore();
   const { loadTemplate } = useReportStore();
   const { loadFromLocalStorage: loadAudioSettings } = useAudioStore();
+  const { loadFromLocalStorage: loadJourneyData } = useJourneyStore();
 
   useEffect(() => {
     loadFromLocalStorage();
     loadTemplate();
     loadAudioSettings();
+    loadJourneyData();
     
     const pixelFont = document.createElement('link');
     pixelFont.rel = 'stylesheet';
@@ -58,7 +61,7 @@ function App() {
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [loadFromLocalStorage, loadTemplate, loadAudioSettings, reportModalOpen, templateModalOpen, showTermsOfService]);
+  }, [loadFromLocalStorage, loadTemplate, loadAudioSettings, loadJourneyData, reportModalOpen, templateModalOpen, showTermsOfService]);
 
   const handleGithubClick = () => {
     window.open('https://github.com/kozuke/quest-like-simple-kanban', '_blank', 'noopener,noreferrer');

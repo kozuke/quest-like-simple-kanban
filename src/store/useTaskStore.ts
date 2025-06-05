@@ -9,6 +9,7 @@ import {
   sanitizeForXSS
 } from '../utils/security';
 import { playMoveSound, playFanfareSound, playAddTaskSound, playDeleteSound } from '../utils/audio';
+import { useJourneyStore } from './useJourneyStore';
 
 const STORAGE_KEY = 'kanban-tasks';
 
@@ -190,6 +191,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       };
     });
 
+    useJourneyStore.getState().addClearedTask();
     playFanfareSound();
     get().debouncedSave();
   },
