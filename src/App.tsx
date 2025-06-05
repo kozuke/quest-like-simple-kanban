@@ -3,20 +3,22 @@ import Header from './components/Header';
 import Board from './components/Board';
 import ReportModal from './components/ReportModal';
 import TemplateEditorModal from './components/TemplateEditorModal';
-import AddTaskModal from './components/AddTaskModal';
+import TaskEditorModal from './components/TaskEditorModal';
 import TermsOfService from './components/TermsOfService';
 import { useTaskStore } from './store/useTaskStore';
 import { useReportStore } from './store/useReportStore';
 import { useAudioStore } from './store/useAudioStore';
-import { TaskStatus } from './types/task';
+import { TaskStatus, Task } from './types/task';
 
 function App() {
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const [templateModalOpen, setTemplateModalOpen] = useState(false);
-  const [addTaskModalOpen, setAddTaskModalOpen] = useState(false);
-  const [addTaskStatus, setAddTaskStatus] = useState<TaskStatus>('backlog');
+  const [taskEditorModalOpen, setTaskEditorModalOpen] = useState(false);
+  const [taskEditorStatus, setTaskEditorStatus] = useState<TaskStatus>('backlog');
+  const [editingTask, setEditingTask] = useState<Task | undefined>(undefined);
+  const [taskEditorMode, setTaskEditorMode] = useState<'add' | 'edit'>('add');
   const [showTermsOfService, setShowTermsOfService] = useState(false);
-  const { loadFromLocalStorage, addTask } = useTaskStore();
+  const { loadFromLocalStorage, addTask, updateTask, removeTask } = useTaskStore();
   const { loadTemplate } = useReportStore();
   const { loadFromLocalStorage: loadAudioSettings } = useAudioStore();
 
@@ -50,8 +52,10 @@ function App() {
           );
           
           if (!isInputFocused) {
-            setAddTaskStatus('backlog'); // デフォルトはバックログ
-            setAddTaskModalOpen(true);
+            setTaskEditorStatus('backlog'); // デフォルトはバックログ
+            setTaskEditorMode('add');
+            setEditingTask(undefined);
+            setTaskEditorModalOpen(true);
           }
         }
       }
@@ -65,13 +69,30 @@ function App() {
     window.open('https://github.com/kozuke/quest-like-simple-kanban', '_blank', 'noopener,noreferrer');
   };
 
-  const handleSaveTask = (title: string, description: string) => {
-    addTask(title, description, addTaskStatus);
+  const openAddTaskModal = (status: TaskStatus = 'backlog') => {
+    setTaskEditorStatus(status);
+    setTaskEditorMode('add');
+    setEditingTask(undefined);
+    setTaskEditorModalOpen(true);
   };
 
-  const openAddTaskModal = (status: TaskStatus = 'backlog') => {
-    setAddTaskStatus(status);
-    setAddTaskModalOpen(true);
+  const openEditTaskModal = (task: Task) => {
+    setTaskEditorStatus(task.status);
+    setTaskEditorMode('edit');
+    setEditingTask(task);
+    setTaskEditorModalOpen(true);
+  };
+
+  const handleTaskSave = (title: string, description: string) => {
+    if (taskEditorMode === 'add') {
+      addTask(title, description, taskEditorStatus);
+    } else if (taskEditorMode === 'edit' && editingTask) {
+      updateTask(editingTask.id, { title, description });
+    }
+  };
+
+  const handleTaskDelete = (taskId: string) => {
+    removeTask(taskId);
   };
 
   if (showTermsOfService) {
@@ -86,7 +107,11 @@ function App() {
       />
       
       <main className="flex-1 overflow-hidden">
-        <Board openAddTaskModal={openAddTaskModal} />
+        <Board 
+          openAddTaskModal={openAddTaskModal}
+          onEditTask={openEditTaskModal}
+          onDeleteTask={handleTaskDelete}
+        />
       </main>
       
       {/* Footer */}
@@ -129,11 +154,13 @@ function App() {
         onClose={() => setTemplateModalOpen(false)}
       />
 
-      <AddTaskModal
-        isOpen={addTaskModalOpen}
-        onClose={() => setAddTaskModalOpen(false)}
-        onSave={handleSaveTask}
-        status={addTaskStatus}
+      <TaskEditorModal
+        isOpen={taskEditorModalOpen}
+        onClose={() => setTaskEditorModalOpen(false)}
+        onSave={handleTaskSave}
+        status={taskEditorStatus}
+        task={editingTask}
+        mode={taskEditorMode}
       />
     </div>
   );

@@ -14,9 +14,11 @@ interface ColumnProps {
   status: TaskStatus;
   tasks: Task[];
   openAddTaskModal: (status?: TaskStatus) => void;
+  onEditTask: (task: Task) => void;
+  onDeleteTask: (taskId: string) => void;
 }
 
-const Column: React.FC<ColumnProps> = ({ title, emoji, status, tasks, openAddTaskModal }) => {
+const Column: React.FC<ColumnProps> = ({ title, emoji, status, tasks, openAddTaskModal, onEditTask, onDeleteTask }) => {
   const { setNodeRef } = useDroppable({ id: status });
 
   const handleAddTask = () => {
@@ -63,7 +65,12 @@ const Column: React.FC<ColumnProps> = ({ title, emoji, status, tasks, openAddTas
           strategy={verticalListSortingStrategy}
         >
           {tasks.map((task) => (
-            <TaskCard key={task.id} task={task} />
+            <TaskCard 
+              key={task.id} 
+              task={task} 
+              onEdit={onEditTask}
+              onDelete={onDeleteTask}
+            />
           ))}
           
           {tasks.length === 0 && (

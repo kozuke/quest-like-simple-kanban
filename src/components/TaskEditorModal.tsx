@@ -1,18 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Save } from 'lucide-react';
-import { TaskStatus } from '../types/task';
+import { TaskStatus, Task } from '../types/task';
 
-interface AddTaskModalProps {
+interface TaskEditorModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (title: string, description: string) => void;
   status: TaskStatus;
+  task?: Task; // 編集時に渡される既存のタスク
+  mode?: 'add' | 'edit'; // モード判定
 }
 
-const AddTaskModal: React.FC<AddTaskModalProps> = ({ isOpen, onClose, onSave, status }) => {
+const TaskEditorModal: React.FC<TaskEditorModalProps> = ({ 
+  isOpen, 
+  onClose, 
+  onSave, 
+  status, 
+  task,
+  mode = 'add'
+}) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+
+  // モーダルが開いた時、編集モードの場合は既存データをセット
+  useEffect(() => {
+    if (isOpen) {
+      if (mode === 'edit' && task) {
+        setTitle(task.title);
+        setDescription(task.description || '');
+      } else {
+        setTitle('');
+        setDescription('');
+      }
+    }
+  }, [isOpen, mode, task]);
 
   const handleSave = () => {
     if (title.trim()) {
@@ -43,6 +65,10 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ isOpen, onClose, onSave, st
     done: 'クリア'
   };
 
+  const modalTitle = mode === 'edit' 
+    ? 'タスクを編集' 
+    : `新しいタスクを${statusLabels[status]}に追加`;
+
   return createPortal(
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4">
       <div 
@@ -52,7 +78,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ isOpen, onClose, onSave, st
         <div className="p-6 border-b border-gray-200 flex-shrink-0">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-pixel font-medium text-gray-900">
-              新しいタスクを{statusLabels[status]}に追加
+              {modalTitle}
             </h3>
             <button
               onClick={handleClose}
@@ -115,7 +141,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ isOpen, onClose, onSave, st
             className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2"
           >
             <Save size={16} />
-            保存
+            {mode === 'edit' ? '更新' : '保存'}
           </button>
         </div>
       </div>
@@ -124,4 +150,4 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ isOpen, onClose, onSave, st
   );
 };
 
-export default AddTaskModal; 
+export default TaskEditorModal; 

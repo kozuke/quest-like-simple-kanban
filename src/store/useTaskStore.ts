@@ -157,6 +157,9 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       },
     }));
 
+    // 同じステージ内での移動時にも移動音を再生
+    playMoveSound();
+
     // デバウンス保存
     get().debouncedSave();
   },

@@ -17,9 +17,11 @@ import { Task, TaskStatus } from '../types/task';
 
 interface BoardProps {
   openAddTaskModal: (status?: TaskStatus) => void;
+  onEditTask: (task: Task) => void;
+  onDeleteTask: (taskId: string) => void;
 }
 
-const Board: React.FC<BoardProps> = ({ openAddTaskModal }) => {
+const Board: React.FC<BoardProps> = ({ openAddTaskModal, onEditTask, onDeleteTask }) => {
   const { tasks, columnOrder, moveTask, reorderColumn } = useTaskStore();
   const [activeTask, setActiveTask] = React.useState<Task | null>(null);
   
@@ -122,6 +124,8 @@ const Board: React.FC<BoardProps> = ({ openAddTaskModal }) => {
             status="backlog" 
             tasks={backlogTasks} 
             openAddTaskModal={openAddTaskModal}
+            onEditTask={onEditTask}
+            onDeleteTask={onDeleteTask}
           />
           <Column 
             title="冒険中" 
@@ -129,6 +133,8 @@ const Board: React.FC<BoardProps> = ({ openAddTaskModal }) => {
             status="doing" 
             tasks={doingTasks} 
             openAddTaskModal={openAddTaskModal}
+            onEditTask={onEditTask}
+            onDeleteTask={onDeleteTask}
           />
           <Column 
             title="クリア" 
@@ -136,12 +142,14 @@ const Board: React.FC<BoardProps> = ({ openAddTaskModal }) => {
             status="done" 
             tasks={doneTasks} 
             openAddTaskModal={openAddTaskModal}
+            onEditTask={onEditTask}
+            onDeleteTask={onDeleteTask}
           />
         </div>
       </div>
       
       <DragOverlay>
-        {activeTask ? <TaskCard task={activeTask} /> : null}
+        {activeTask ? <TaskCard task={activeTask} onEdit={onEditTask} onDelete={onDeleteTask} /> : null}
       </DragOverlay>
     </DndContext>
   );
