@@ -11,7 +11,8 @@ import {
 } from 'chart.js';
 import { useJourneyStore } from '../store/useJourneyStore';
 import { useTaskStore } from '../store/useTaskStore';
-import { RefreshCw, Star } from 'lucide-react';
+import { RefreshCw, Star, History } from 'lucide-react';
+import PastTasksModal from './PastTasksModal';
 
 ChartJS.register(
   CategoryScale,
@@ -24,12 +25,13 @@ ChartJS.register(
 
 const SlimeDashboard: React.FC = () => {
   const { clearedTasks, resetJourney } = useJourneyStore();
-  const { claimAllExp } = useTaskStore();
+  const { tasks, claimAllExp } = useTaskStore();
   const [currentSlime, setCurrentSlime] = useState(1);
   const [nextGoal, setNextGoal] = useState(10);
   const [showConfirm, setShowConfirm] = useState(false);
   const [isEvolving, setIsEvolving] = useState(false);
   const [previousSlime, setPreviousSlime] = useState(1);
+  const [showPastTasks, setShowPastTasks] = useState(false);
 
   useEffect(() => {
     const total = Object.values(clearedTasks).reduce((sum, count) => sum + count, 0);
@@ -111,12 +113,23 @@ const SlimeDashboard: React.FC = () => {
     }
   };
 
+  // Get past tasks sorted by creation date
+  const pastTasks = Object.values(tasks)
+    .sort((a, b) => b.createdAt - a.createdAt);
+
   return (
     <div className="bg-white rounded-xl shadow-lg p-6 space-y-6">
       <div className="text-center">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-pixel text-gray-800">旅の記録</h2>
           <div className="flex gap-2">
+            <button
+              onClick={() => setShowPastTasks(true)}
+              className="p-2 text-blue-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200"
+              title="過去のタスクを表示"
+            >
+              <History size={20} />
+            </button>
             <button
               onClick={handleClaimAllExp}
               className="p-2 text-yellow-500 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200"
@@ -197,6 +210,12 @@ const SlimeDashboard: React.FC = () => {
           </div>
         </div>
       )}
+
+      <PastTasksModal
+        isOpen={showPastTasks}
+        onClose={() => setShowPastTasks(false)}
+        tasks={pastTasks}
+      />
     </div>
   );
 };
