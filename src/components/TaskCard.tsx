@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Pencil, Trash2, Copy, Star } from 'lucide-react';
+import { Pencil, Trash2, Copy } from 'lucide-react';
 import { Task } from '../types/task';
 import { useTaskStore } from '../store/useTaskStore';
 
@@ -91,10 +91,14 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onCopy }) =
           {task.status === 'done' && !task.expClaimed && (
             <button 
               onClick={handleClaimExp}
-              className="p-1.5 text-yellow-500 hover:text-yellow-700 hover:bg-yellow-50 rounded-lg transition-all duration-200"
+              className="p-1.5 hover:bg-yellow-50 rounded-lg transition-all duration-200"
               title="経験値を獲得"
             >
-              <Star size={14} />
+              <img 
+                src="/exp_icon.png" 
+                alt="経験値を獲得" 
+                className="w-4 h-4"
+              />
             </button>
           )}
           <button 
