@@ -20,13 +20,12 @@ function App() {
   const [editingTask, setEditingTask] = useState<Task | undefined>(undefined);
   const [taskEditorMode, setTaskEditorMode] = useState<'add' | 'edit'>('add');
   const [showTermsOfService, setShowTermsOfService] = useState(false);
-  const { loadFromLocalStorage, addTask, updateTask, removeTask } = useTaskStore();
+  const { addTask, updateTask, removeTask } = useTaskStore();
   const { loadTemplate } = useReportStore();
   const { loadFromLocalStorage: loadAudioSettings } = useAudioStore();
   const { loadFromLocalStorage: loadJourneyData } = useJourneyStore();
 
   useEffect(() => {
-    loadFromLocalStorage();
     loadTemplate();
     loadAudioSettings();
     loadJourneyData();
@@ -61,7 +60,7 @@ function App() {
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [loadFromLocalStorage, loadTemplate, loadAudioSettings, loadJourneyData, reportModalOpen, templateModalOpen, showTermsOfService]);
+  }, [loadTemplate, loadAudioSettings, loadJourneyData, reportModalOpen, templateModalOpen, showTermsOfService]);
 
   const handleGithubClick = () => {
     window.open('https://github.com/kozuke/quest-like-simple-kanban', '_blank', 'noopener,noreferrer');
