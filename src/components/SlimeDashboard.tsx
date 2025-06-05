@@ -89,9 +89,9 @@ const SlimeDashboard: React.FC = () => {
         <h2 className="text-2xl font-pixel text-gray-800 mb-4">旅の記録</h2>
         <div className="flex justify-center mb-4">
           <img 
-            src={`/images/slimes/slime${currentSlime}.gif`} 
+            src={`/slime_${currentSlime}.jpg`} 
             alt={`Level ${currentSlime} Slime`}
-            className="w-32 h-32 object-contain"
+            className="w-32 h-32 object-contain rounded-lg shadow-md"
           />
         </div>
         <p className="font-pixel text-lg text-gray-700 mb-2">
@@ -111,4 +111,4 @@ const SlimeDashboard: React.FC = () => {
   );
 };
 
-export default SlimeDashboard
+export default SlimeDashboard;
