@@ -10,6 +10,7 @@ import {
   Legend
 } from 'chart.js';
 import { useJourneyStore } from '../store/useJourneyStore';
+import { RefreshCw } from 'lucide-react';
 
 ChartJS.register(
   CategoryScale,
@@ -21,9 +22,10 @@ ChartJS.register(
 );
 
 const SlimeDashboard: React.FC = () => {
-  const { clearedTasks } = useJourneyStore();
+  const { clearedTasks, resetJourney } = useJourneyStore();
   const [currentSlime, setCurrentSlime] = useState(1);
   const [nextGoal, setNextGoal] = useState(10);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   useEffect(() => {
     const total = Object.values(clearedTasks).reduce((sum, count) => sum + count, 0);
@@ -83,10 +85,28 @@ const SlimeDashboard: React.FC = () => {
 
   const totalCleared = Object.values(clearedTasks).reduce((sum, count) => sum + count, 0);
 
+  const handleResetClick = () => {
+    setShowConfirm(true);
+  };
+
+  const handleConfirmReset = () => {
+    resetJourney();
+    setShowConfirm(false);
+  };
+
   return (
     <div className="bg-white rounded-xl shadow-lg p-6 space-y-6">
       <div className="text-center">
-        <h2 className="text-2xl font-pixel text-gray-800 mb-4">旅の記録</h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-pixel text-gray-800">旅の記録</h2>
+          <button
+            onClick={handleResetClick}
+            className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-all duration-200"
+            title="記録をリセット"
+          >
+            <RefreshCw size={20} />
+          </button>
+        </div>
         <div className="flex justify-center mb-4">
           <img 
             src={`/slime_${currentSlime}.jpg`} 
@@ -107,6 +127,33 @@ const SlimeDashboard: React.FC = () => {
       <div className="h-64">
         <Bar data={chartData} options={chartOptions} />
       </div>
+
+      {showConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full mx-4">
+            <h3 className="text-xl font-pixel text-gray-800 mb-4">
+              記録をリセットしますか？
+            </h3>
+            <p className="text-gray-600 mb-6">
+              これまでのタスククリア記録が全て消去されます。この操作は取り消せません。
+            </p>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={() => setShowConfirm(false)}
+                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                キャンセル
+              </button>
+              <button
+                onClick={handleConfirmReset}
+                className="px-4 py-2 bg-red-500 text-white hover:bg-red-600 rounded-lg transition-colors"
+              >
+                リセット
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

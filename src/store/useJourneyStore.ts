@@ -3,6 +3,7 @@ import { create } from 'zustand';
 interface JourneyStore {
   clearedTasks: Record<string, number>;
   addClearedTask: () => void;
+  resetJourney: () => void;
   loadFromLocalStorage: () => void;
   saveToLocalStorage: () => void;
 }
@@ -24,6 +25,11 @@ export const useJourneyStore = create<JourneyStore>((set, get) => ({
       return { clearedTasks: updatedClearedTasks };
     });
 
+    get().saveToLocalStorage();
+  },
+
+  resetJourney: () => {
+    set({ clearedTasks: {} });
     get().saveToLocalStorage();
   },
 
