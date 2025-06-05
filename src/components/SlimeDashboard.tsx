@@ -110,3 +110,5 @@ const SlimeDashboard: React.FC = () => {
     </div>
   );
 };
+
+export default SlimeDashboard
