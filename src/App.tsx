@@ -5,9 +5,11 @@ import ReportModal from './components/ReportModal';
 import TemplateEditorModal from './components/TemplateEditorModal';
 import TaskEditorModal from './components/TaskEditorModal';
 import TermsOfService from './components/TermsOfService';
+import SlimeDashboard from './components/SlimeDashboard';
 import { useTaskStore } from './store/useTaskStore';
 import { useReportStore } from './store/useReportStore';
 import { useAudioStore } from './store/useAudioStore';
+import { useJourneyStore } from './store/useJourneyStore';
 import { TaskStatus, Task } from './types/task';
 
 function App() {
@@ -21,28 +23,24 @@ function App() {
   const { loadFromLocalStorage, addTask, updateTask, removeTask } = useTaskStore();
   const { loadTemplate } = useReportStore();
   const { loadFromLocalStorage: loadAudioSettings } = useAudioStore();
+  const { loadFromLocalStorage: loadJourneyData } = useJourneyStore();
 
   useEffect(() => {
-    // Load saved data on mount
     loadFromLocalStorage();
     loadTemplate();
     loadAudioSettings();
+    loadJourneyData();
     
-    // Add pixel font
     const pixelFont = document.createElement('link');
     pixelFont.rel = 'stylesheet';
     pixelFont.href = 'https://fonts.googleapis.com/css2?family=DotGothic16&family=Press+Start+2P&display=swap';
     document.head.appendChild(pixelFont);
 
-    // Update document title
     document.title = 'Dragon Task | Local First Kanban Board';
 
-    // Keyboard shortcut listener
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Command+K (Mac) or Ctrl+K (Windows/Linux)
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
-        // Don't open if other modals are open or if user is typing in an input
         if (!reportModalOpen && !templateModalOpen && !showTermsOfService) {
           const activeElement = document.activeElement;
           const isInputFocused = activeElement && (
@@ -52,7 +50,7 @@ function App() {
           );
           
           if (!isInputFocused) {
-            setTaskEditorStatus('backlog'); // デフォルトはバックログ
+            setTaskEditorStatus('backlog');
             setTaskEditorMode('add');
             setEditingTask(undefined);
             setTaskEditorModalOpen(true);
@@ -63,7 +61,7 @@ function App() {
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [loadFromLocalStorage, loadTemplate, loadAudioSettings, reportModalOpen, templateModalOpen, showTermsOfService]);
+  }, [loadFromLocalStorage, loadTemplate, loadAudioSettings, loadJourneyData, reportModalOpen, templateModalOpen, showTermsOfService]);
 
   const handleGithubClick = () => {
     window.open('https://github.com/kozuke/quest-like-simple-kanban', '_blank', 'noopener,noreferrer');
@@ -106,15 +104,21 @@ function App() {
         openTemplateModal={() => setTemplateModalOpen(true)}
       />
       
-      <main className="flex-1 overflow-hidden">
-        <Board 
-          openAddTaskModal={openAddTaskModal}
-          onEditTask={openEditTaskModal}
-          onDeleteTask={handleTaskDelete}
-        />
+      <main className="flex-1 overflow-hidden p-4">
+        <div className="container mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6 h-full">
+          <div className="lg:col-span-3 overflow-hidden">
+            <Board 
+              openAddTaskModal={openAddTaskModal}
+              onEditTask={openEditTaskModal}
+              onDeleteTask={handleTaskDelete}
+            />
+          </div>
+          <div className="overflow-y-auto">
+            <SlimeDashboard />
+          </div>
+        </div>
       </main>
       
-      {/* Footer */}
       <footer className="bg-slate-100 border-t border-slate-200 py-2 px-4">
         <div className="container mx-auto flex justify-center items-center space-x-6 text-xs text-slate-400">
           <button

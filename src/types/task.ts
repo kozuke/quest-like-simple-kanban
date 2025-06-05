@@ -6,6 +6,7 @@ export interface Task {
   description?: string;
   createdAt: number;
   status: TaskStatus;
+  expClaimed?: boolean;
 }
 
 export interface TaskStore {
@@ -21,6 +22,8 @@ export interface TaskStore {
   moveTask: (taskId: string, destination: TaskStatus, index: number) => void;
   reorderColumn: (status: TaskStatus, newOrder: string[]) => void;
   copyTask: (id: string) => void;
+  claimExp: (taskId: string) => void;
+  claimAllExp: () => number;
   saveToLocalStorage: () => void;
   loadFromLocalStorage: () => void;
   debouncedSave: () => void;
