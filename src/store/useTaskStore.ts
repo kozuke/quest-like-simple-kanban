@@ -12,9 +12,8 @@ import { playMoveSound, playFanfareSound, playAddTaskSound, playDeleteSound } fr
 
 const STORAGE_KEY = 'kanban-tasks';
 
-// デバウンス用の変数
 let saveTimeoutId: NodeJS.Timeout | null = null;
-const SAVE_DEBOUNCE_MS = 300; // 300ms後に保存実行
+const SAVE_DEBOUNCE_MS = 300;
 
 export const useTaskStore = create<TaskStore>((set, get) => ({
   tasks: {},
