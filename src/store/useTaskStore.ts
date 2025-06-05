@@ -25,7 +25,6 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   },
 
   addTask: (title, description = '', status = 'backlog') => {
-    // 入力データをサニタイズ
     const sanitizedTitle = sanitizeForXSS(title);
     const sanitizedDescription = sanitizeForXSS(description);
     
@@ -41,6 +40,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       description: sanitizedDescription,
       createdAt: Date.now(),
       status,
+      expClaimed: false,
     };
 
     set((state) => {
@@ -53,10 +53,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       return { tasks: updatedTasks, columnOrder: updatedColumnOrder };
     });
 
-    // タスク追加音を再生
     playAddTaskSound();
-
-    // デバウンス保存
     get().debouncedSave();
   },
 
@@ -65,7 +62,6 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       const task = state.tasks[id];
       if (!task) return state;
 
-      // 更新データをサニタイズ
       const sanitizedUpdates = { ...updates };
       if (sanitizedUpdates.title) {
         sanitizedUpdates.title = sanitizeForXSS(sanitizedUpdates.title);
@@ -78,7 +74,6 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       return { tasks: { ...state.tasks, [id]: updatedTask } };
     });
 
-    // デバウンス保存
     get().debouncedSave();
   },
 
@@ -96,10 +91,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       return { tasks: remainingTasks, columnOrder: updatedColumnOrder };
     });
 
-    // タスク削除音を再生
     playDeleteSound();
-
-    // デバウンス保存
     get().debouncedSave();
   },
 
@@ -114,24 +106,18 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         return state;
       }
 
-      // Remove from source column
       const sourceColumn = state.columnOrder[sourceStatus].filter(
         (id) => id !== taskId
       );
 
-      // Add to destination column at specified index
       const destinationColumn = [...state.columnOrder[destination]];
       destinationColumn.splice(index, 0, taskId);
 
-      // Update task status
       const updatedTask = { ...task, status: destination };
 
-      // 音声再生: クリア(done)ステージに移動する場合はファンファーレ、それ以外は移動音
       if (destination === 'done' && sourceStatus !== 'done') {
-        // クリアステージに移動する場合
         playFanfareSound();
       } else if (sourceStatus !== destination) {
-        // 他のステージ間での移動の場合
         playMoveSound();
       }
 
@@ -145,7 +131,6 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       };
     });
 
-    // デバウンス保存
     get().debouncedSave();
   },
 
@@ -157,10 +142,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       },
     }));
 
-    // 同じステージ内での移動時にも移動音を再生
     playMoveSound();
-
-    // デバウンス保存
     get().debouncedSave();
   },
 
@@ -169,23 +151,20 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       const originalTask = state.tasks[id];
       if (!originalTask) return state;
 
-      // 新しいIDを生成
       const newId = nanoid();
       
-      // タスクを複製（タイトルに「のコピー」を追加）
       const copiedTask: Task = {
         ...originalTask,
         id: newId,
         title: sanitizeForXSS(`${originalTask.title}のコピー`),
         createdAt: Date.now(),
+        expClaimed: false,
       };
 
-      // 元のタスクと同じステージに追加
       const updatedTasks = { ...state.tasks, [newId]: copiedTask };
       const currentColumn = state.columnOrder[originalTask.status];
       const originalIndex = currentColumn.indexOf(id);
       
-      // 元のタスクの直後に挿入
       const newColumn = [...currentColumn];
       newColumn.splice(originalIndex + 1, 0, newId);
 
@@ -197,21 +176,30 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       return { tasks: updatedTasks, columnOrder: updatedColumnOrder };
     });
 
-    // タスク追加音を再生
     playAddTaskSound();
-
-    // デバウンス保存
     get().debouncedSave();
   },
 
-  // デバウンス機能付き保存メソッドを追加
+  claimExp: (taskId) => {
+    set((state) => {
+      const task = state.tasks[taskId];
+      if (!task || task.expClaimed) return state;
+
+      const updatedTask = { ...task, expClaimed: true };
+      return {
+        tasks: { ...state.tasks, [taskId]: updatedTask }
+      };
+    });
+
+    playFanfareSound();
+    get().debouncedSave();
+  },
+
   debouncedSave: () => {
-    // 既存のタイマーをクリア
     if (saveTimeoutId) {
       clearTimeout(saveTimeoutId);
     }
     
-    // 新しいタイマーを設定
     saveTimeoutId = setTimeout(() => {
       get().saveToLocalStorage();
       saveTimeoutId = null;
@@ -224,7 +212,6 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     try {
       const dataToSave = JSON.stringify({ tasks, columnOrder });
       
-      // ストレージ容量をチェック
       if (!checkLocalStorageQuota(STORAGE_KEY, dataToSave)) {
         console.error('LocalStorage容量が不足しています');
         return;
@@ -245,14 +232,12 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         return;
       }
 
-      // 安全にJSONをパース
       const parsedData = safeJsonParse(savedData);
       if (!parsedData) {
         console.error('保存されたデータが破損しています');
         return;
       }
 
-      // データを検証とサニタイズ
       const sanitizedTasks: Record<string, Task> = {};
       if (parsedData.tasks && typeof parsedData.tasks === 'object') {
         for (const [taskId, taskData] of Object.entries(parsedData.tasks)) {
@@ -265,7 +250,6 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
       const sanitizedColumnOrder = validateAndSanitizeColumnOrder(parsedData.columnOrder);
 
-      // サニタイズされたデータのみを設定
       set({ 
         tasks: sanitizedTasks, 
         columnOrder: sanitizedColumnOrder 
@@ -274,7 +258,6 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       console.log('データが正常に読み込まれました');
     } catch (error) {
       console.error('Failed to load from localStorage:', error);
-      // エラーの場合はデフォルト状態にリセット
       set({ 
         tasks: {}, 
         columnOrder: { backlog: [], doing: [], done: [] } 

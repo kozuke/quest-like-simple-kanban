@@ -11,7 +11,6 @@ import {
 } from 'chart.js';
 import { useTaskStore } from '../store/useTaskStore';
 
-// Register ChartJS components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -29,34 +28,29 @@ const SlimeDashboard: React.FC = () => {
   const [nextGoal, setNextGoal] = useState(10);
 
   useEffect(() => {
-    // Calculate tasks cleared per day
     const tasksByDay: Record<string, number> = {};
     Object.values(tasks).forEach(task => {
-      if (task.status === 'done') {
+      if (task.status === 'done' && task.expClaimed) {
         const date = new Date(task.createdAt).toISOString().split('T')[0];
         tasksByDay[date] = (tasksByDay[date] || 0) + 1;
       }
     });
     setClearedTasks(tasksByDay);
 
-    // Calculate total cleared tasks
     const total = Object.values(tasksByDay).reduce((sum, count) => sum + count, 0);
     setTotalCleared(total);
 
-    // Determine slime evolution
     if (total >= 100) setCurrentSlime(5);
     else if (total >= 50) setCurrentSlime(4);
     else if (total >= 20) setCurrentSlime(3);
     else if (total >= 10) setCurrentSlime(2);
     else setCurrentSlime(1);
 
-    // Set next evolution goal
     const goals = [10, 20, 50, 100];
     const next = goals.find(n => n > total) ?? Infinity;
     setNextGoal(next);
   }, [tasks]);
 
-  // Prepare chart data
   const last7Days = Array.from({ length: 7 }, (_, i) => {
     const date = new Date();
     date.setDate(date.getDate() - i);

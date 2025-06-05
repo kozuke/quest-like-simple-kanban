@@ -1,8 +1,9 @@
 import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Pencil, Trash2, Copy } from 'lucide-react';
+import { Pencil, Trash2, Copy, Star } from 'lucide-react';
 import { Task } from '../types/task';
+import { useTaskStore } from '../store/useTaskStore';
 
 interface TaskCardProps {
   task: Task;
@@ -21,6 +22,8 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onCopy }) =
     isDragging,
   } = useSortable({ id: task.id });
   
+  const { claimExp } = useTaskStore();
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -42,6 +45,11 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onCopy }) =
     onCopy(task.id);
   };
 
+  const handleClaimExp = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    claimExp(task.id);
+  };
+
   return (
     <div 
       ref={setNodeRef} 
@@ -55,6 +63,15 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onCopy }) =
           {task.title}
         </h3>
         <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex-shrink-0">
+          {task.status === 'done' && !task.expClaimed && (
+            <button 
+              onClick={handleClaimExp}
+              className="p-1.5 text-yellow-500 hover:text-yellow-700 hover:bg-yellow-50 rounded-lg transition-all duration-200"
+              title="経験値を獲得"
+            >
+              <Star size={14} />
+            </button>
+          )}
           <button 
             onClick={handleEdit}
             className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-all duration-200"
