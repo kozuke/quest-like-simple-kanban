@@ -25,7 +25,7 @@ ChartJS.register(
 
 const SlimeDashboard: React.FC = () => {
   const { clearedTasks, resetJourney } = useJourneyStore();
-  const { tasks, claimAllExp } = useTaskStore();
+  const { claimAllExp } = useTaskStore();
   const [currentSlime, setCurrentSlime] = useState(1);
   const [nextGoal, setNextGoal] = useState(10);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -34,7 +34,7 @@ const SlimeDashboard: React.FC = () => {
   const [showPastTasks, setShowPastTasks] = useState(false);
 
   useEffect(() => {
-    const total = Object.values(clearedTasks).reduce((sum, count) => sum + count, 0);
+    const total = Object.values(clearedTasks).reduce((sum, record) => sum + record.count, 0);
     const newSlimeLevel = total >= 100 ? 5 
                        : total >= 50 ? 4 
                        : total >= 20 ? 3 
@@ -63,7 +63,7 @@ const SlimeDashboard: React.FC = () => {
     labels: last7Days.map(date => date.split('-').slice(1).join('/')),
     datasets: [{
       label: 'クリアしたタスク',
-      data: last7Days.map(date => clearedTasks[date] || 0),
+      data: last7Days.map(date => clearedTasks[date]?.count || 0),
       backgroundColor: 'rgba(54, 162, 235, 0.5)',
       borderColor: 'rgba(54, 162, 235, 1)',
       borderWidth: 1
@@ -95,7 +95,7 @@ const SlimeDashboard: React.FC = () => {
     }
   };
 
-  const totalCleared = Object.values(clearedTasks).reduce((sum, count) => sum + count, 0);
+  const totalCleared = Object.values(clearedTasks).reduce((sum, record) => sum + record.count, 0);
 
   const handleResetClick = () => {
     setShowConfirm(true);
@@ -112,10 +112,6 @@ const SlimeDashboard: React.FC = () => {
       // Optional: Show a success message
     }
   };
-
-  // Get past tasks sorted by creation date
-  const pastTasks = Object.values(tasks)
-    .sort((a, b) => b.createdAt - a.createdAt);
 
   return (
     <div className="bg-white rounded-xl shadow-lg p-6 space-y-6">
@@ -214,7 +210,6 @@ const SlimeDashboard: React.FC = () => {
       <PastTasksModal
         isOpen={showPastTasks}
         onClose={() => setShowPastTasks(false)}
-        tasks={pastTasks}
       />
     </div>
   );
