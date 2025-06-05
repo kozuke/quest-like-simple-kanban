@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware';
 import { Task, TaskStatus, TaskStore } from '../types/task';
 import { useJourneyStore } from './useJourneyStore';
 import { useAudioStore } from './useAudioStore';
+import { playAddTaskSound, playDeleteSound, playMoveSound, playFanfareSound } from '../utils/audio';
 
 export const useTaskStore = create<TaskStore>()(
   persist(
@@ -15,7 +16,6 @@ export const useTaskStore = create<TaskStore>()(
       },
       
       addTask: (title, description = '', status: TaskStatus = 'backlog') => {
-        const { playAddTaskSound } = useAudioStore.getState();
         const taskId = crypto.randomUUID();
         
         playAddTaskSound();
@@ -62,7 +62,6 @@ export const useTaskStore = create<TaskStore>()(
       },
       
       removeTask: (id) => {
-        const { playDeleteSound } = useAudioStore.getState();
         playDeleteSound();
         
         set((state) => {
@@ -83,8 +82,6 @@ export const useTaskStore = create<TaskStore>()(
       },
       
       moveTask: (taskId, destination, index) => {
-        const { playMoveSound } = useAudioStore.getState();
-        
         set((state) => {
           const task = state.tasks[taskId];
           if (!task) return state;
@@ -130,8 +127,6 @@ export const useTaskStore = create<TaskStore>()(
       },
       
       copyTask: (id) => {
-        const { playAddTaskSound } = useAudioStore.getState();
-        
         set((state) => {
           const task = state.tasks[id];
           if (!task) return state;
@@ -177,7 +172,6 @@ export const useTaskStore = create<TaskStore>()(
       },
       
       claimAllExp: () => {
-        const { playFanfareSound } = useAudioStore.getState();
         const { addClearedTask } = useJourneyStore.getState();
         
         let totalExp = 0;
