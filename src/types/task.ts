@@ -24,6 +24,9 @@ export interface TaskStore {
   copyTask: (id: string) => void;
   claimExp: (taskId: string) => void;
   claimAllExp: () => number;
+  saveToLocalStorage: () => void;
+  loadFromLocalStorage: () => void;
+  debouncedSave: () => void;
 }
 
 export interface ReportTemplate {

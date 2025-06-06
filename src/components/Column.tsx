@@ -41,8 +41,8 @@ const Column: React.FC<ColumnProps> = ({ title, emoji, status, tasks, openAddTas
   };
 
   return (
-    <div className="flex-1 min-w-[280px] max-w-[360px] h-full flex flex-col rounded-xl border shadow-lg overflow-hidden backdrop-blur-sm bg-white/10">
-      <div className={`p-4 border-b border-inherit bg-white/90 backdrop-blur-sm flex items-center justify-between ${columnBg[status]}`}>
+    <div className={`flex-1 min-w-[280px] max-w-[360px] flex flex-col rounded-xl border shadow-lg ${columnBg[status]} overflow-hidden backdrop-blur-sm`}>
+      <div className="p-4 border-b border-inherit bg-white/90 backdrop-blur-sm flex items-center justify-between">
         <div className="flex items-center gap-3">
           <span className={`inline-flex items-center justify-center h-10 w-10 rounded-full ${emojiStyles[status]} font-pixel text-lg`}>
             {emoji}
@@ -59,7 +59,7 @@ const Column: React.FC<ColumnProps> = ({ title, emoji, status, tasks, openAddTas
       
       <div 
         ref={setNodeRef}
-        className="flex-1 p-3 overflow-y-auto min-h-0 bg-gradient-to-b from-white/40 to-white/60 backdrop-blur-sm"
+        className="flex-1 p-3 overflow-y-auto min-h-[200px] bg-gradient-to-b from-white/40 to-white/60 backdrop-blur-sm"
       >
         <SortableContext 
           items={tasks.map(task => task.id)} 

@@ -11,8 +11,7 @@ import {
 } from 'chart.js';
 import { useJourneyStore } from '../store/useJourneyStore';
 import { useTaskStore } from '../store/useTaskStore';
-import { RefreshCw, Star, History } from 'lucide-react';
-import PastTasksModal from './PastTasksModal';
+import { RefreshCw, Star } from 'lucide-react';
 
 ChartJS.register(
   CategoryScale,
@@ -31,10 +30,9 @@ const SlimeDashboard: React.FC = () => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [isEvolving, setIsEvolving] = useState(false);
   const [previousSlime, setPreviousSlime] = useState(1);
-  const [showPastTasks, setShowPastTasks] = useState(false);
 
   useEffect(() => {
-    const total = Object.values(clearedTasks).reduce((sum, record) => sum + record.count, 0);
+    const total = Object.values(clearedTasks).reduce((sum, count) => sum + count, 0);
     const newSlimeLevel = total >= 100 ? 5 
                        : total >= 50 ? 4 
                        : total >= 20 ? 3 
@@ -63,7 +61,7 @@ const SlimeDashboard: React.FC = () => {
     labels: last7Days.map(date => date.split('-').slice(1).join('/')),
     datasets: [{
       label: 'クリアしたタスク',
-      data: last7Days.map(date => clearedTasks[date]?.count || 0),
+      data: last7Days.map(date => clearedTasks[date] || 0),
       backgroundColor: 'rgba(54, 162, 235, 0.5)',
       borderColor: 'rgba(54, 162, 235, 1)',
       borderWidth: 1
@@ -95,7 +93,7 @@ const SlimeDashboard: React.FC = () => {
     }
   };
 
-  const totalCleared = Object.values(clearedTasks).reduce((sum, record) => sum + record.count, 0);
+  const totalCleared = Object.values(clearedTasks).reduce((sum, count) => sum + count, 0);
 
   const handleResetClick = () => {
     setShowConfirm(true);
@@ -119,13 +117,6 @@ const SlimeDashboard: React.FC = () => {
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-pixel text-gray-800">旅の記録</h2>
           <div className="flex gap-2">
-            <button
-              onClick={() => setShowPastTasks(true)}
-              className="p-2 text-blue-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200"
-              title="過去のタスクを表示"
-            >
-              <History size={20} />
-            </button>
             <button
               onClick={handleClaimAllExp}
               className="p-2 text-yellow-500 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200"
@@ -206,11 +197,6 @@ const SlimeDashboard: React.FC = () => {
           </div>
         </div>
       )}
-
-      <PastTasksModal
-        isOpen={showPastTasks}
-        onClose={() => setShowPastTasks(false)}
-      />
     </div>
   );
 };
