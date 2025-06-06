@@ -22,8 +22,7 @@ function App() {
   const [editingTask, setEditingTask] = useState<Task | undefined>(undefined);
   const [taskEditorMode, setTaskEditorMode] = useState<'add' | 'edit'>('add');
   const [showTermsOfService, setShowTermsOfService] = useState(false);
-  const [isJourneyVisible, setIsJourneyVisible] = useState(window.innerWidth >= 1024);
-  const [isJourneyDrawerOpen, setIsJourneyDrawerOpen] = useState(false);
+  const [isJourneyExpanded, setIsJourneyExpanded] = useState(window.innerWidth >= 1024);
   const { addTask, updateTask, removeTask } = useTaskStore();
   const { loadTemplate } = useReportStore();
   const { loadFromLocalStorage: loadAudioSettings } = useAudioStore();
@@ -70,11 +69,7 @@ function App() {
     };
 
     const handleResize = () => {
-      const isWideScreen = window.innerWidth >= 1024;
-      setIsJourneyVisible(isWideScreen);
-      if (isWideScreen) {
-        setIsJourneyDrawerOpen(false);
-      }
+      setIsJourneyExpanded(window.innerWidth >= 1024);
     };
 
     window.addEventListener('resize', handleResize);
@@ -116,10 +111,6 @@ function App() {
     removeTask(taskId);
   };
 
-  const toggleJourneyDrawer = () => {
-    setIsJourneyDrawerOpen(!isJourneyDrawerOpen);
-  };
-
   if (showTermsOfService) {
     return <TermsOfService onBack={() => setShowTermsOfService(false)} />;
   }
@@ -129,37 +120,43 @@ function App() {
       <Header 
         openReportModal={() => setReportModalOpen(true)}
         openTemplateModal={() => setTemplateModalOpen(true)}
-        onToggleJourney={toggleJourneyDrawer}
-        showJourneyToggle={!isJourneyVisible}
       />
       
-      <main className="flex-1 overflow-hidden">
-        <div className="h-full flex flex-col lg:flex-row">
-          <div className="flex-1 min-w-0 p-4 overflow-hidden">
-            <Board 
-              openAddTaskModal={openAddTaskModal}
-              onEditTask={openEditTaskModal}
-              onDeleteTask={handleTaskDelete}
-            />
-          </div>
-          
-          {/* Journey Dashboard */}
-          <div 
-            className={`
-              lg:w-96 transition-all duration-300 ease-in-out
-              ${isJourneyVisible ? 'block' : 'hidden'}
-              lg:block lg:relative
-              ${isJourneyDrawerOpen ? 'fixed inset-0 z-50 bg-black bg-opacity-50' : ''}
-            `}
-          >
-            <div 
-              className={`
-                bg-white h-full lg:h-auto overflow-auto
-                ${isJourneyDrawerOpen ? 'fixed right-0 top-0 w-96 h-full shadow-2xl' : ''}
-                ${!isJourneyVisible && !isJourneyDrawerOpen ? 'hidden' : ''}
-              `}
-            >
-              <SlimeDashboard onClose={isJourneyDrawerOpen ? toggleJourneyDrawer : undefined} />
+      <main className="flex-1 overflow-hidden p-4">
+        <div className="container mx-auto h-full">
+          <div className="flex flex-col lg:flex-row gap-6 h-full">
+            <div className="flex-1 min-w-0 overflow-hidden">
+              <Board 
+                openAddTaskModal={openAddTaskModal}
+                onEditTask={openEditTaskModal}
+                onDeleteTask={handleTaskDelete}
+              />
+            </div>
+            
+            <div className={`lg:w-80 transition-all duration-300 ease-in-out ${
+              isJourneyExpanded ? 'h-auto' : 'h-12'
+            }`}>
+              <div 
+                className="bg-white rounded-xl shadow-lg overflow-hidden"
+                style={{ maxHeight: isJourneyExpanded ? '100%' : '48px' }}
+              >
+                <button
+                  onClick={() => setIsJourneyExpanded(!isJourneyExpanded)}
+                  className="w-full p-3 text-left font-pixel text-lg text-gray-800 hover:bg-gray-50 lg:hidden flex items-center justify-between"
+                >
+                  <span>旅の記録</span>
+                  <span className="transform transition-transform duration-200" style={{
+                    transform: isJourneyExpanded ? 'rotate(180deg)' : 'rotate(0deg)'
+                  }}>
+                    ▼
+                  </span>
+                </button>
+                <div className={`transition-all duration-300 ease-in-out ${
+                  isJourneyExpanded ? 'opacity-100' : 'opacity-0 lg:opacity-100'
+                }`}>
+                  <SlimeDashboard />
+                </div>
+              </div>
             </div>
           </div>
         </div>
