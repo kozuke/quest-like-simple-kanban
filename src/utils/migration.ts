@@ -6,16 +6,15 @@ interface LegacyTask {
   description?: string;
   status: TaskStatus;
   createdAt: number;
+  expClaimed?: boolean;
 }
 
 interface LegacyData {
-  state: {
-    tasks: Record<string, LegacyTask>;
-    columnOrder: {
-      backlog: string[];
-      doing: string[];
-      done: string[];
-    };
+  tasks: Record<string, LegacyTask>;
+  columnOrder: {
+    backlog: string[];
+    doing: string[];
+    done: string[];
   };
 }
 
@@ -42,22 +41,22 @@ export function migrateLegacyData(): {
 
     // Transform legacy tasks to new format
     const migratedTasks: Record<string, Task> = {};
-    for (const [id, task] of Object.entries(parsed.state.tasks)) {
+    for (const [id, task] of Object.entries(parsed.tasks)) {
       migratedTasks[id] = {
         id: task.id,
         title: task.title,
-        description: task.description,
+        description: task.description || '',
         status: task.status,
         createdAt: task.createdAt,
-        expClaimed: false
+        expClaimed: task.expClaimed || false
       };
     }
 
     // Migrate column order
     const migratedColumnOrder = {
-      backlog: [...parsed.state.columnOrder.backlog],
-      doing: [...parsed.state.columnOrder.doing],
-      done: [...parsed.state.columnOrder.done]
+      backlog: [...parsed.columnOrder.backlog],
+      doing: [...parsed.columnOrder.doing],
+      done: [...parsed.columnOrder.done]
     };
 
     // Remove legacy data after successful migration
@@ -82,14 +81,12 @@ function isValidLegacyData(data: any): data is LegacyData {
   return (
     data &&
     typeof data === 'object' &&
-    'state' in data &&
-    typeof data.state === 'object' &&
-    'tasks' in data.state &&
-    'columnOrder' in data.state &&
-    typeof data.state.tasks === 'object' &&
-    typeof data.state.columnOrder === 'object' &&
-    Array.isArray(data.state.columnOrder.backlog) &&
-    Array.isArray(data.state.columnOrder.doing) &&
-    Array.isArray(data.state.columnOrder.done)
+    'tasks' in data &&
+    'columnOrder' in data &&
+    typeof data.tasks === 'object' &&
+    typeof data.columnOrder === 'object' &&
+    Array.isArray(data.columnOrder.backlog) &&
+    Array.isArray(data.columnOrder.doing) &&
+    Array.isArray(data.columnOrder.done)
   );
 }
