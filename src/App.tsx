@@ -22,7 +22,7 @@ function App() {
   const [editingTask, setEditingTask] = useState<Task | undefined>(undefined);
   const [taskEditorMode, setTaskEditorMode] = useState<'add' | 'edit'>('add');
   const [showTermsOfService, setShowTermsOfService] = useState(false);
-  const [isJourneyExpanded, setIsJourneyExpanded] = useState(window.innerWidth >= 1024);
+  const [isJourneyExpanded, setIsJourneyExpanded] = useState(false);
   const { addTask, updateTask, removeTask } = useTaskStore();
   const { loadTemplate } = useReportStore();
   const { loadFromLocalStorage: loadAudioSettings } = useAudioStore();
@@ -69,7 +69,9 @@ function App() {
     };
 
     const handleResize = () => {
-      setIsJourneyExpanded(window.innerWidth >= 1024);
+      if (window.innerWidth >= 1024) {
+        setIsJourneyExpanded(false);
+      }
     };
 
     window.addEventListener('resize', handleResize);
@@ -125,11 +127,12 @@ function App() {
       <main className="flex-1 overflow-hidden p-4">
         <div className="container mx-auto h-full">
           <div className="flex flex-col lg:flex-row gap-6 h-full">
-            <div className="flex-1 min-w-0 overflow-hidden">
+            <div className={`flex-1 min-w-0 overflow-hidden ${isJourneyExpanded ? 'overflow-x-hidden' : ''}`}>
               <Board 
                 openAddTaskModal={openAddTaskModal}
                 onEditTask={openEditTaskModal}
                 onDeleteTask={handleTaskDelete}
+                isJourneyExpanded={isJourneyExpanded}
               />
             </div>
             
@@ -138,7 +141,7 @@ function App() {
             }`}>
               <div 
                 className="bg-white rounded-xl shadow-lg overflow-hidden"
-                style={{ maxHeight: isJourneyExpanded ? '100%' : '48px' }}
+                style={{ maxHeight: isJourneyExpanded ? '100vh' : '48px' }}
               >
                 <button
                   onClick={() => setIsJourneyExpanded(!isJourneyExpanded)}

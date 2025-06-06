@@ -39,7 +39,7 @@ const Column: React.FC<ColumnProps> = ({ title, emoji, status, tasks, openAddTas
   };
 
   return (
-    <div className="flex-1 min-w-[280px] max-w-full md:max-w-[360px] h-full flex flex-col rounded-xl border shadow-lg overflow-hidden backdrop-blur-sm bg-white/10">
+    <div className="flex-1 min-w-[280px] w-full md:w-auto md:max-w-[360px] h-full flex flex-col rounded-xl border shadow-lg overflow-hidden backdrop-blur-sm bg-white/10">
       <div className={`p-4 border-b border-inherit bg-white/90 backdrop-blur-sm flex items-center justify-between ${columnBg[status]}`}>
         <div className="flex items-center gap-3">
           <span className={`inline-flex items-center justify-center h-10 w-10 rounded-full ${emojiStyles[status]} font-pixel text-lg`}>

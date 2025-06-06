@@ -19,9 +19,15 @@ interface BoardProps {
   openAddTaskModal: (status?: TaskStatus) => void;
   onEditTask: (task: Task) => void;
   onDeleteTask: (taskId: string) => void;
+  isJourneyExpanded: boolean;
 }
 
-const Board: React.FC<BoardProps> = ({ openAddTaskModal, onEditTask, onDeleteTask }) => {
+const Board: React.FC<BoardProps> = ({ 
+  openAddTaskModal, 
+  onEditTask, 
+  onDeleteTask,
+  isJourneyExpanded 
+}) => {
   const { tasks, columnOrder, moveTask, reorderColumn, copyTask } = useTaskStore();
   const [activeTask, setActiveTask] = React.useState<Task | null>(null);
   
@@ -44,7 +50,6 @@ const Board: React.FC<BoardProps> = ({ openAddTaskModal, onEditTask, onDeleteTas
   };
 
   const handleDragOver = (event: DragOverEvent) => {
-    // handleDragOverでは状態更新は行わず、視覚的なフィードバックのみを処理
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -103,8 +108,8 @@ const Board: React.FC<BoardProps> = ({ openAddTaskModal, onEditTask, onDeleteTas
       onDragEnd={handleDragEnd}
     >
       <div className="flex flex-col h-full">
-        <div className="flex-1 overflow-x-auto overflow-y-hidden">
-          <div className="flex flex-col md:flex-row gap-6 p-6 md:min-w-max h-full">
+        <div className={`flex-1 ${isJourneyExpanded ? '' : 'overflow-x-auto'} overflow-y-hidden`}>
+          <div className={`flex gap-6 p-6 ${isJourneyExpanded ? 'flex-col' : 'md:flex-row md:min-w-max'} h-full`}>
             <Column 
               title="クエスト" 
               emoji="🗺️" 
