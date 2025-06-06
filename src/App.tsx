@@ -11,6 +11,7 @@ import { useReportStore } from './store/useReportStore';
 import { useAudioStore } from './store/useAudioStore';
 import { useJourneyStore } from './store/useJourneyStore';
 import { TaskStatus, Task } from './types/task';
+import { debugLocalStorage } from './utils/debug';
 
 function App() {
   const [reportModalOpen, setReportModalOpen] = useState(false);
@@ -26,6 +27,9 @@ function App() {
   const { loadFromLocalStorage: loadJourneyData } = useJourneyStore();
 
   useEffect(() => {
+    // Debug localStorage content
+    debugLocalStorage();
+
     loadTemplate();
     loadAudioSettings();
     loadJourneyData();
