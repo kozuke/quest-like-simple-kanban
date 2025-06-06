@@ -209,22 +209,7 @@ export const useTaskStore = create<TaskStore>()(
     }),
     {
       name: 'task-store',
-      version: 1,
-      onRehydrateStorage: () => {
-        // Check for legacy data
-        const legacyData = localStorage.getItem('kanban-tasks');
-        if (legacyData) {
-          try {
-            const parsed = JSON.parse(legacyData);
-            if (parsed && parsed.tasks && parsed.columnOrder) {
-              return parsed;
-            }
-          } catch (error) {
-            console.error('Failed to parse legacy data:', error);
-          }
-        }
-        return null;
-      }
+      version: 1
     }
   )
 );
