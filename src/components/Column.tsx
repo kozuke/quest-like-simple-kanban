@@ -26,14 +26,12 @@ const Column: React.FC<ColumnProps> = ({ title, emoji, status, tasks, openAddTas
     openAddTaskModal(status);
   };
 
-  // Column emoji backgrounds
   const columnBg = {
     backlog: 'bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200/60',
     doing: 'bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200/60',
     done: 'bg-gradient-to-br from-green-50 to-green-100 border-green-200/60',
   };
 
-  // Column emoji styles
   const emojiStyles = {
     backlog: 'bg-blue-100 text-blue-800 shadow-sm',
     doing: 'bg-amber-100 text-amber-800 shadow-sm',
@@ -41,7 +39,7 @@ const Column: React.FC<ColumnProps> = ({ title, emoji, status, tasks, openAddTas
   };
 
   return (
-    <div className="flex-1 min-w-[280px] max-w-[360px] h-full flex flex-col rounded-xl border shadow-lg overflow-hidden backdrop-blur-sm bg-white/10">
+    <div className="flex-1 min-w-[280px] max-w-full md:max-w-[360px] h-full flex flex-col rounded-xl border shadow-lg overflow-hidden backdrop-blur-sm bg-white/10">
       <div className={`p-4 border-b border-inherit bg-white/90 backdrop-blur-sm flex items-center justify-between ${columnBg[status]}`}>
         <div className="flex items-center gap-3">
           <span className={`inline-flex items-center justify-center h-10 w-10 rounded-full ${emojiStyles[status]} font-pixel text-lg`}>

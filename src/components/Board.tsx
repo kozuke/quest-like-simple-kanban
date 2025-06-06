@@ -45,7 +45,6 @@ const Board: React.FC<BoardProps> = ({ openAddTaskModal, onEditTask, onDeleteTas
 
   const handleDragOver = (event: DragOverEvent) => {
     // handleDragOverでは状態更新は行わず、視覚的なフィードバックのみを処理
-    // 実際の状態更新はhandleDragEndで行う
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -57,27 +56,22 @@ const Board: React.FC<BoardProps> = ({ openAddTaskModal, onEditTask, onDeleteTas
     const activeId = active.id as string;
     const overId = over.id as string;
     
-    // Ignore if dropping on the same task
     if (activeId === overId) return;
     
     const activeTask = tasks[activeId];
     if (!activeTask) return;
     
-    // If over a task
     if (tasks[overId]) {
       const overTask = tasks[overId];
       const activeStatus = activeTask.status;
       const overStatus = overTask.status;
       
-      // If tasks are in different columns
       if (activeStatus !== overStatus) {
         const overIndex = columnOrder[overStatus].indexOf(overId);
         if (overIndex !== -1) {
           moveTask(activeId, overStatus, overIndex);
         }
-      } 
-      // If tasks are in the same column
-      else {
+      } else {
         const items = [...columnOrder[activeStatus]];
         const oldIndex = items.indexOf(activeId);
         const newIndex = items.indexOf(overId);
@@ -87,24 +81,16 @@ const Board: React.FC<BoardProps> = ({ openAddTaskModal, onEditTask, onDeleteTas
           reorderColumn(activeStatus, newOrder);
         }
       }
-    } 
-    // If over a column
-    else if (['backlog', 'doing', 'done'].includes(overId)) {
+    } else if (['backlog', 'doing', 'done'].includes(overId)) {
       const overStatus = overId as TaskStatus;
       const activeStatus = activeTask.status;
       
-      // Only if moving to a different column
       if (activeStatus !== overStatus) {
-        const activeIndex = columnOrder[activeStatus].indexOf(activeId);
-        
-        if (activeIndex !== -1) {
-          moveTask(activeId, overStatus, columnOrder[overStatus].length);
-        }
+        moveTask(activeId, overStatus, columnOrder[overStatus].length);
       }
     }
   };
 
-  // Create lists of tasks by status
   const backlogTasks = columnOrder.backlog.map(id => tasks[id]).filter(Boolean);
   const doingTasks = columnOrder.doing.map(id => tasks[id]).filter(Boolean);
   const doneTasks = columnOrder.done.map(id => tasks[id]).filter(Boolean);
@@ -117,9 +103,8 @@ const Board: React.FC<BoardProps> = ({ openAddTaskModal, onEditTask, onDeleteTas
       onDragEnd={handleDragEnd}
     >
       <div className="flex flex-col h-full">
-        {/* Horizontal scrollable container */}
         <div className="flex-1 overflow-x-auto overflow-y-hidden">
-          <div className="flex gap-6 p-6 min-w-max h-full">
+          <div className="flex flex-col md:flex-row gap-6 p-6 md:min-w-max h-full">
             <Column 
               title="クエスト" 
               emoji="🗺️" 

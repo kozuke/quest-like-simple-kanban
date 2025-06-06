@@ -22,16 +22,15 @@ function App() {
   const [editingTask, setEditingTask] = useState<Task | undefined>(undefined);
   const [taskEditorMode, setTaskEditorMode] = useState<'add' | 'edit'>('add');
   const [showTermsOfService, setShowTermsOfService] = useState(false);
+  const [isJourneyExpanded, setIsJourneyExpanded] = useState(window.innerWidth >= 1024);
   const { addTask, updateTask, removeTask } = useTaskStore();
   const { loadTemplate } = useReportStore();
   const { loadFromLocalStorage: loadAudioSettings } = useAudioStore();
   const { loadFromLocalStorage: loadJourneyData } = useJourneyStore();
 
   useEffect(() => {
-    // Debug localStorage content
     debugLocalStorage();
 
-    // Migrate legacy data if it exists
     const migratedData = migrateLegacyData();
     if (migratedData) {
       useTaskStore.setState(migratedData);
@@ -69,8 +68,17 @@ function App() {
       }
     };
 
+    const handleResize = () => {
+      setIsJourneyExpanded(window.innerWidth >= 1024);
+    };
+
+    window.addEventListener('resize', handleResize);
     document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
   }, [loadTemplate, loadAudioSettings, loadJourneyData, reportModalOpen, templateModalOpen, showTermsOfService]);
 
   const handleGithubClick = () => {
@@ -115,16 +123,41 @@ function App() {
       />
       
       <main className="flex-1 overflow-hidden p-4">
-        <div className="container mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6 h-full">
-          <div className="lg:col-span-3 overflow-hidden">
-            <Board 
-              openAddTaskModal={openAddTaskModal}
-              onEditTask={openEditTaskModal}
-              onDeleteTask={handleTaskDelete}
-            />
-          </div>
-          <div className="overflow-y-auto">
-            <SlimeDashboard />
+        <div className="container mx-auto h-full">
+          <div className="flex flex-col lg:flex-row gap-6 h-full">
+            <div className="flex-1 min-w-0 overflow-hidden">
+              <Board 
+                openAddTaskModal={openAddTaskModal}
+                onEditTask={openEditTaskModal}
+                onDeleteTask={handleTaskDelete}
+              />
+            </div>
+            
+            <div className={`lg:w-80 transition-all duration-300 ease-in-out ${
+              isJourneyExpanded ? 'h-auto' : 'h-12'
+            }`}>
+              <div 
+                className="bg-white rounded-xl shadow-lg overflow-hidden"
+                style={{ maxHeight: isJourneyExpanded ? '100%' : '48px' }}
+              >
+                <button
+                  onClick={() => setIsJourneyExpanded(!isJourneyExpanded)}
+                  className="w-full p-3 text-left font-pixel text-lg text-gray-800 hover:bg-gray-50 lg:hidden flex items-center justify-between"
+                >
+                  <span>旅の記録</span>
+                  <span className="transform transition-transform duration-200" style={{
+                    transform: isJourneyExpanded ? 'rotate(180deg)' : 'rotate(0deg)'
+                  }}>
+                    ▼
+                  </span>
+                </button>
+                <div className={`transition-all duration-300 ease-in-out ${
+                  isJourneyExpanded ? 'opacity-100' : 'opacity-0 lg:opacity-100'
+                }`}>
+                  <SlimeDashboard />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </main>
