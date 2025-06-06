@@ -1,19 +1,8 @@
 import { create } from 'zustand';
-import { Task } from '../types/task';
-
-interface CompletedTask {
-  title: string;
-  description?: string;
-}
-
-interface DailyRecord {
-  count: number;
-  tasks: CompletedTask[];
-}
 
 interface JourneyStore {
-  clearedTasks: Record<string, DailyRecord>;
-  addClearedTask: (task: Task) => void;
+  clearedTasks: Record<string, number>;
+  addClearedTask: () => void;
   resetJourney: () => void;
   loadFromLocalStorage: () => void;
   saveToLocalStorage: () => void;
@@ -24,25 +13,16 @@ const STORAGE_KEY = 'kanban-journey';
 export const useJourneyStore = create<JourneyStore>((set, get) => ({
   clearedTasks: {},
 
-  addClearedTask: (task: Task) => {
+  addClearedTask: () => {
     const today = new Date().toISOString().split('T')[0];
     
     set(state => {
-      const currentRecord = state.clearedTasks[today] || { count: 0, tasks: [] };
-      const updatedRecord = {
-        count: currentRecord.count + 1,
-        tasks: [...currentRecord.tasks, {
-          title: task.title,
-          description: task.description
-        }]
+      const updatedClearedTasks = {
+        ...state.clearedTasks,
+        [today]: (state.clearedTasks[today] || 0) + 1
       };
       
-      return {
-        clearedTasks: {
-          ...state.clearedTasks,
-          [today]: updatedRecord
-        }
-      };
+      return { clearedTasks: updatedClearedTasks };
     });
 
     get().saveToLocalStorage();
@@ -59,23 +39,7 @@ export const useJourneyStore = create<JourneyStore>((set, get) => ({
       if (savedData) {
         const parsed = JSON.parse(savedData);
         if (parsed && typeof parsed === 'object') {
-          // Handle both old and new data structure
-          const convertedData: Record<string, DailyRecord> = {};
-          
-          for (const [date, value] of Object.entries(parsed)) {
-            if (typeof value === 'number') {
-              // Convert old format to new format
-              convertedData[date] = {
-                count: value,
-                tasks: []
-              };
-            } else {
-              // Use new format as is
-              convertedData[date] = value as DailyRecord;
-            }
-          }
-          
-          set({ clearedTasks: convertedData });
+          set({ clearedTasks: parsed });
         }
       }
     } catch (error) {

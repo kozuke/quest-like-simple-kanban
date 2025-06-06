@@ -4,7 +4,6 @@ import { CSS } from '@dnd-kit/utilities';
 import { Pencil, Trash2, Copy } from 'lucide-react';
 import { Task } from '../types/task';
 import { useTaskStore } from '../store/useTaskStore';
-import { useJourneyStore } from '../store/useJourneyStore';
 
 interface TaskCardProps {
   task: Task;
@@ -16,7 +15,6 @@ interface TaskCardProps {
 const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onCopy }) => {
   const [isDisappearing, setIsDisappearing] = useState(false);
   const { claimExp } = useTaskStore();
-  const { addClearedTask } = useJourneyStore();
   
   const {
     attributes,
@@ -51,9 +49,6 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onCopy }) =
   const handleClaimExp = async (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsDisappearing(true);
-    
-    // Add task to journey record
-    addClearedTask(task);
     
     // Wait for the animation to complete
     await new Promise(resolve => setTimeout(resolve, 800));
