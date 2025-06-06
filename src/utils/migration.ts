@@ -6,6 +6,7 @@ interface LegacyTask {
   description?: string;
   status: TaskStatus;
   createdAt: number;
+  expClaimed?: boolean;
 }
 
 interface LegacyData {
@@ -25,13 +26,16 @@ export function migrateLegacyData(): {
     // Check for legacy data
     const legacyData = localStorage.getItem('kanban-tasks');
     if (!legacyData) {
+      console.log('No legacy data found');
       return null;
     }
+
+    console.log('Found legacy data:', legacyData);
 
     // Parse and validate legacy data
     const parsed = JSON.parse(legacyData);
     if (!isValidLegacyData(parsed)) {
-      console.warn('Invalid legacy data structure found');
+      console.warn('Invalid legacy data structure:', parsed);
       return null;
     }
 
@@ -41,10 +45,10 @@ export function migrateLegacyData(): {
       migratedTasks[id] = {
         id: task.id,
         title: task.title,
-        description: task.description,
+        description: task.description || '',
         status: task.status,
         createdAt: task.createdAt,
-        expClaimed: false
+        expClaimed: task.expClaimed || false
       };
     }
 
@@ -58,7 +62,11 @@ export function migrateLegacyData(): {
     // Remove legacy data after successful migration
     localStorage.removeItem('kanban-tasks');
 
-    console.log('Legacy data migration completed successfully');
+    console.log('Migration completed. Migrated data:', {
+      tasks: migratedTasks,
+      columnOrder: migratedColumnOrder
+    });
+
     return {
       tasks: migratedTasks,
       columnOrder: migratedColumnOrder

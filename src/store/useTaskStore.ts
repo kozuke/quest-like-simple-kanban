@@ -2,19 +2,13 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Task, TaskStatus, TaskStore } from '../types/task';
 import { useJourneyStore } from './useJourneyStore';
-import { useAudioStore } from './useAudioStore';
 import { playAddTaskSound, playDeleteSound, playMoveSound, playFanfareSound } from '../utils/audio';
-import { migrateLegacyData } from '../utils/migration';
-
-// Perform data migration before creating the store
-const migratedData = migrateLegacyData();
 
 export const useTaskStore = create<TaskStore>()(
   persist(
     (set, get) => ({
-      // Initialize with migrated data or default values
-      tasks: migratedData?.tasks ?? {},
-      columnOrder: migratedData?.columnOrder ?? {
+      tasks: {},
+      columnOrder: {
         backlog: [],
         doing: [],
         done: []
