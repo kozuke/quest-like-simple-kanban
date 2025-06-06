@@ -1,23 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { FileText, Settings, Volume2, VolumeX, Volume1 } from 'lucide-react';
+import React, { useState } from 'react';
+import { FileText, Settings, Volume2, VolumeX, Volume1, Menu } from 'lucide-react';
 import { useAudioStore } from '../store/useAudioStore';
 
 interface HeaderProps {
   openReportModal: () => void;
   openTemplateModal: () => void;
+  onToggleJourney: () => void;
+  showJourneyToggle: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ openReportModal, openTemplateModal }) => {
+const Header: React.FC<HeaderProps> = ({ 
+  openReportModal, 
+  openTemplateModal,
+  onToggleJourney,
+  showJourneyToggle
+}) => {
   const [isReportHovered, setIsReportHovered] = useState(false);
   const [isTemplateHovered, setIsTemplateHovered] = useState(false);
   const [isVolumeHovered, setIsVolumeHovered] = useState(false);
   
   const { volumeLevel, cycleVolume, loadFromLocalStorage } = useAudioStore();
-
-  useEffect(() => {
-    // コンポーネントマウント時に音量設定をローカルストレージから読み込み
-    loadFromLocalStorage();
-  }, [loadFromLocalStorage]);
 
   const getVolumeIcon = () => {
     switch (volumeLevel) {
@@ -56,6 +58,17 @@ const Header: React.FC<HeaderProps> = ({ openReportModal, openTemplateModal }) =
         </div>
         
         <div className="flex items-center space-x-2">
+          {showJourneyToggle && (
+            <button
+              onClick={onToggleJourney}
+              className="bg-blue-700 hover:bg-blue-800 transition-colors duration-200 text-white px-3 py-2 rounded flex items-center"
+              title="旅の記録を表示"
+            >
+              <Menu size={18} />
+              <span className="hidden sm:inline ml-1">旅の記録</span>
+            </button>
+          )}
+          
           <button
             onClick={cycleVolume}
             onMouseEnter={() => setIsVolumeHovered(true)}

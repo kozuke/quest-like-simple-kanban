@@ -11,7 +11,7 @@ import {
 } from 'chart.js';
 import { useJourneyStore } from '../store/useJourneyStore';
 import { useTaskStore } from '../store/useTaskStore';
-import { RefreshCw, Star, History } from 'lucide-react';
+import { RefreshCw, Star, History, X } from 'lucide-react';
 import PastTasksModal from './PastTasksModal';
 
 ChartJS.register(
@@ -23,7 +23,11 @@ ChartJS.register(
   Legend
 );
 
-const SlimeDashboard: React.FC = () => {
+interface SlimeDashboardProps {
+  onClose?: () => void;
+}
+
+const SlimeDashboard: React.FC<SlimeDashboardProps> = ({ onClose }) => {
   const { clearedTasks, resetJourney } = useJourneyStore();
   const { claimAllExp } = useTaskStore();
   const [currentSlime, setCurrentSlime] = useState(1);
@@ -114,34 +118,44 @@ const SlimeDashboard: React.FC = () => {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6 space-y-6">
-      <div className="text-center">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-pixel text-gray-800">旅の記録</h2>
-          <div className="flex gap-2">
+    <div className="bg-white h-full p-6 space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-pixel text-gray-800">旅の記録</h2>
+        <div className="flex gap-2">
+          {onClose && (
             <button
-              onClick={() => setShowPastTasks(true)}
-              className="p-2 text-blue-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200"
-              title="過去のタスクを表示"
-            >
-              <History size={20} />
-            </button>
-            <button
-              onClick={handleClaimAllExp}
-              className="p-2 text-yellow-500 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200"
-              title="全ての経験値を獲得"
-            >
-              <Star size={20} />
-            </button>
-            <button
-              onClick={handleResetClick}
+              onClick={onClose}
               className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-all duration-200"
-              title="記録をリセット"
+              title="閉じる"
             >
-              <RefreshCw size={20} />
+              <X size={20} />
             </button>
-          </div>
+          )}
+          <button
+            onClick={() => setShowPastTasks(true)}
+            className="p-2 text-blue-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200"
+            title="過去のタスクを表示"
+          >
+            <History size={20} />
+          </button>
+          <button
+            onClick={handleClaimAllExp}
+            className="p-2 text-yellow-500 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200"
+            title="全ての経験値を獲得"
+          >
+            <Star size={20} />
+          </button>
+          <button
+            onClick={handleResetClick}
+            className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-all duration-200"
+            title="記録をリセット"
+          >
+            <RefreshCw size={20} />
+          </button>
         </div>
+      </div>
+
+      <div className="text-center">
         <div className="relative flex justify-center mb-4">
           {isEvolving && (
             <>
