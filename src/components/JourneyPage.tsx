@@ -34,7 +34,7 @@ const JourneyPage: React.FC<JourneyPageProps> = ({ onNavigateToBoard }) => {
   const { claimAllExp, columnOrder, tasks } = useTaskStore();
   const { getVolumeValue } = useAudioStore();
   const [currentSlime, setCurrentSlime] = useState(1);
-  const [nextGoal, setNextGoal] = useState(10);
+  const [nextGoal, setNextGoal] = useState(5);
   const [showConfirm, setShowConfirm] = useState(false);
   const [isEvolving, setIsEvolving] = useState(false);
   const [previousSlime, setPreviousSlime] = useState(1);
@@ -78,10 +78,12 @@ const JourneyPage: React.FC<JourneyPageProps> = ({ onNavigateToBoard }) => {
 
   React.useEffect(() => {
     const total = Object.values(clearedTasks).reduce((sum, record) => sum + record.count, 0);
-    const newSlimeLevel = total >= 100 ? 5 
-                       : total >= 50 ? 4 
-                       : total >= 20 ? 3 
-                       : total >= 10 ? 2 
+    
+    // 新しい進化レベル設定: 5個, 10個, 20個, 30個で進化
+    const newSlimeLevel = total >= 30 ? 5 
+                       : total >= 20 ? 4 
+                       : total >= 10 ? 3 
+                       : total >= 5 ? 2 
                        : 1;
 
     if (newSlimeLevel !== currentSlime) {
@@ -95,7 +97,8 @@ const JourneyPage: React.FC<JourneyPageProps> = ({ onNavigateToBoard }) => {
       setTimeout(() => setIsEvolving(false), 2000);
     }
 
-    const goals = [10, 20, 50, 100];
+    // 次の目標設定
+    const goals = [5, 10, 20, 30];
     const next = goals.find(n => n > total) ?? Infinity;
     setNextGoal(next);
   }, [clearedTasks, currentSlime]);
@@ -249,10 +252,10 @@ const JourneyPage: React.FC<JourneyPageProps> = ({ onNavigateToBoard }) => {
     if (claimedCount > 0) {
       // 進化演出のトリガー
       const newTotal = totalCleared + claimedCount;
-      const newSlimeLevel = newTotal >= 100 ? 5 
-                         : newTotal >= 50 ? 4 
-                         : newTotal >= 20 ? 3 
-                         : newTotal >= 10 ? 2 
+      const newSlimeLevel = newTotal >= 30 ? 5 
+                         : newTotal >= 20 ? 4 
+                         : newTotal >= 10 ? 3 
+                         : newTotal >= 5 ? 2 
                          : 1;
 
       if (newSlimeLevel !== currentSlime) {
@@ -266,6 +269,23 @@ const JourneyPage: React.FC<JourneyPageProps> = ({ onNavigateToBoard }) => {
         setTimeout(() => setIsEvolving(false), 2000);
       }
     }
+  };
+
+  // 進捗バーの計算を改善
+  const getProgressPercentage = () => {
+    if (nextGoal === Infinity) return 100;
+    
+    const currentLevelBase = currentSlime === 1 ? 0 
+                           : currentSlime === 2 ? 5 
+                           : currentSlime === 3 ? 10 
+                           : currentSlime === 4 ? 20 
+                           : 30;
+    
+    const nextLevelTarget = nextGoal;
+    const progressInCurrentLevel = totalCleared - currentLevelBase;
+    const totalNeededForCurrentLevel = nextLevelTarget - currentLevelBase;
+    
+    return Math.min(100, (progressInCurrentLevel / totalNeededForCurrentLevel) * 100);
   };
 
   return (
@@ -362,9 +382,7 @@ const JourneyPage: React.FC<JourneyPageProps> = ({ onNavigateToBoard }) => {
                   <div className="bg-white/30 rounded-full h-2 lg:h-3 backdrop-blur-sm border border-white/40 mb-2 lg:mb-3">
                     <div 
                       className="bg-gradient-to-r from-yellow-400 to-orange-500 h-2 lg:h-3 rounded-full transition-all duration-500 shadow-inner"
-                      style={{ 
-                        width: nextGoal !== Infinity ? `${((totalCleared % (nextGoal === 10 ? 10 : nextGoal === 20 ? 10 : nextGoal === 50 ? 30 : 50)) / (nextGoal === 10 ? 10 : nextGoal === 20 ? 10 : nextGoal === 50 ? 30 : 50)) * 100}%` : '100%'
-                      }}
+                      style={{ width: `${getProgressPercentage()}%` }}
                     ></div>
                   </div>
                   

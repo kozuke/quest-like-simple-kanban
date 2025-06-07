@@ -27,7 +27,7 @@ const SlimeDashboard: React.FC = () => {
   const { clearedTasks, resetJourney } = useJourneyStore();
   const { claimAllExp } = useTaskStore();
   const [currentSlime, setCurrentSlime] = useState(1);
-  const [nextGoal, setNextGoal] = useState(10);
+  const [nextGoal, setNextGoal] = useState(5);
   const [showConfirm, setShowConfirm] = useState(false);
   const [isEvolving, setIsEvolving] = useState(false);
   const [previousSlime, setPreviousSlime] = useState(1);
@@ -35,10 +35,12 @@ const SlimeDashboard: React.FC = () => {
 
   useEffect(() => {
     const total = Object.values(clearedTasks).reduce((sum, record) => sum + record.count, 0);
-    const newSlimeLevel = total >= 100 ? 5 
-                       : total >= 50 ? 4 
-                       : total >= 20 ? 3 
-                       : total >= 10 ? 2 
+    
+    // 新しい進化レベル設定: 5個, 10個, 20個, 30個で進化
+    const newSlimeLevel = total >= 30 ? 5 
+                       : total >= 20 ? 4 
+                       : total >= 10 ? 3 
+                       : total >= 5 ? 2 
                        : 1;
 
     if (newSlimeLevel !== currentSlime) {
@@ -48,7 +50,8 @@ const SlimeDashboard: React.FC = () => {
       setTimeout(() => setIsEvolving(false), 2000);
     }
 
-    const goals = [10, 20, 50, 100];
+    // 次の目標設定
+    const goals = [5, 10, 20, 30];
     const next = goals.find(n => n > total) ?? Infinity;
     setNextGoal(next);
   }, [clearedTasks, currentSlime]);

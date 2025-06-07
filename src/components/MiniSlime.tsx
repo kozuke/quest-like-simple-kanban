@@ -14,10 +14,12 @@ const MiniSlime: React.FC<MiniSlimeProps> = ({ onClick }) => {
 
   useEffect(() => {
     const total = Object.values(clearedTasks).reduce((sum, record) => sum + record.count, 0);
-    const newSlimeLevel = total >= 100 ? 5 
-                       : total >= 50 ? 4 
-                       : total >= 20 ? 3 
-                       : total >= 10 ? 2 
+    
+    // 新しい進化レベル設定: 5個, 10個, 20個, 30個で進化
+    const newSlimeLevel = total >= 30 ? 5 
+                       : total >= 20 ? 4 
+                       : total >= 10 ? 3 
+                       : total >= 5 ? 2 
                        : 1;
     setCurrentSlime(newSlimeLevel);
   }, [clearedTasks]);
