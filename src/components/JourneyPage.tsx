@@ -348,7 +348,7 @@ const JourneyPage: React.FC<JourneyPageProps> = ({ onNavigateToBoard }) => {
             {/* 右側: 統計・グラフエリア */}
             <div className="bg-white rounded-xl shadow-lg overflow-hidden">
               
-              {/* ヘッダー */}
+              {/* 統計エリアヘッダー - 常に表示 */}
               <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-6">
                 <div className="flex justify-between items-center">
                   <h3 className="text-2xl font-pixel">冒険の記録</h3>
@@ -372,26 +372,9 @@ const JourneyPage: React.FC<JourneyPageProps> = ({ onNavigateToBoard }) => {
               </div>
 
               {/* 統計カード */}
-              <div className="p-6 space-y-4">
+              <div className="p-6 space-y-6">
                 
-                {/* アクションボタン */}
-                <div className="flex justify-center gap-3 pb-3 border-b border-gray-200">
-                  <button
-                    onClick={() => setShowPastTasks(true)}
-                    className="p-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg border border-blue-200 transition-all duration-200"
-                    title="過去のタスクを表示"
-                  >
-                    <History size={18} />
-                  </button>
-                  <button
-                    onClick={handleResetClick}
-                    className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg border border-red-200 transition-all duration-200"
-                    title="記録をリセット"
-                  >
-                    <RefreshCw size={18} />
-                  </button>
-                </div>
-                
+                {/* 統計グリッド */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-lg border border-blue-200">
                     <div className="text-center">
@@ -406,8 +389,8 @@ const JourneyPage: React.FC<JourneyPageProps> = ({ onNavigateToBoard }) => {
                       <div className="text-3xl mb-2">⭐</div>
                       <div className="font-pixel text-sm text-green-600">現在レベル</div>
                       <div className="font-pixel text-2xl text-green-800">Lv.{currentSlime}</div>
-                </div>
-              </div>
+                    </div>
+                  </div>
 
                   <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-lg border border-purple-200">
                     <div className="text-center">
@@ -417,23 +400,23 @@ const JourneyPage: React.FC<JourneyPageProps> = ({ onNavigateToBoard }) => {
                         {last7Days.reduce((sum, date) => sum + (clearedTasks[date]?.count || 0), 0)}
                       </div>
                     </div>
-              </div>
+                  </div>
 
                   <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-4 rounded-lg border border-orange-200">
                     <div className="text-center">
                       <div className="text-3xl mb-2">⚡</div>
                       <div className="font-pixel text-sm text-orange-600">待機中</div>
                       <div className="font-pixel text-2xl text-orange-800">{completedTasksCount}</div>
+                    </div>
                   </div>
-              </div>
-            </div>
+                </div>
 
-            {/* グラフエリア */}
+                {/* グラフエリア */}
                 <div className="bg-gray-50 rounded-xl p-6 border">
-              <div className="h-80">
-                <Bar data={chartData} options={chartOptions} />
-              </div>
-            </div>
+                  <div className="h-80">
+                    <Bar data={chartData} options={chartOptions} />
+                  </div>
+                </div>
               </div>
             </div>
             
