@@ -348,9 +348,15 @@ const JourneyPage: React.FC<JourneyPageProps> = ({ onNavigateToBoard }) => {
             {/* 右側: 統計・グラフエリア */}
             <div className="bg-white rounded-xl shadow-lg overflow-hidden">
               
-              {/* 統計エリアヘッダー - 背景色を明示的に指定 */}
-              <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-6 relative">
-                <div className="flex justify-between items-center relative z-10">
+              {/* 統計エリアヘッダー - インラインスタイルで強制的に背景色を適用 */}
+              <div 
+                className="text-white p-6"
+                style={{
+                  background: 'linear-gradient(to right, #3b82f6, #9333ea)',
+                  backgroundColor: '#3b82f6'
+                }}
+              >
+                <div className="flex justify-between items-center">
                   <h3 className="text-2xl font-pixel text-white">冒険の記録</h3>
                   <div className="flex gap-2">
                     <button
