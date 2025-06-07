@@ -90,10 +90,11 @@ export const useTaskStore = create<TaskStore>()(
             return state;
           }
           
-          // クリアボードに移動した場合はファンファーレ、それ以外は移動音
+          // 音響フィードバック：クリアボードに移動した場合はファンファーレ、それ以外は移動音
           if (destination === 'done' && sourceStatus !== 'done') {
             playFanfareSound();
           } else {
+            // 同じステージ間の移動でも移動音を再生
             playMoveSound();
           }
           
@@ -121,6 +122,9 @@ export const useTaskStore = create<TaskStore>()(
       },
       
       reorderColumn: (status, newOrder) => {
+        // 同じカラム内での並び替えでも移動音を再生
+        playMoveSound();
+        
         set((state) => ({
           columnOrder: {
             ...state.columnOrder,
