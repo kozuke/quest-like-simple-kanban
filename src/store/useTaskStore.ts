@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Task, TaskStatus, TaskStore } from '../types/task';
 import { useJourneyStore } from './useJourneyStore';
-import { useAudioStore } from './useAudioStore';
 import { playAddTaskSound, playDeleteSound, playMoveSound, playFanfareSound } from '../utils/audio';
 
 export const useTaskStore = create<TaskStore>()(

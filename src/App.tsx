@@ -11,6 +11,8 @@ import { useReportStore } from './store/useReportStore';
 import { useAudioStore } from './store/useAudioStore';
 import { useJourneyStore } from './store/useJourneyStore';
 import { TaskStatus, Task } from './types/task';
+import { debugLocalStorage } from './utils/debug';
+import { migrateLegacyData } from './utils/migration';
 
 function App() {
   const [reportModalOpen, setReportModalOpen] = useState(false);
@@ -26,6 +28,15 @@ function App() {
   const { loadFromLocalStorage: loadJourneyData } = useJourneyStore();
 
   useEffect(() => {
+    // Debug localStorage content
+    debugLocalStorage();
+
+    // Migrate legacy data if it exists
+    const migratedData = migrateLegacyData();
+    if (migratedData) {
+      useTaskStore.setState(migratedData);
+    }
+
     loadTemplate();
     loadAudioSettings();
     loadJourneyData();
