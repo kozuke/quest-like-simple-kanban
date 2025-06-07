@@ -51,7 +51,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onCopy }) =
       className="bg-white/95 backdrop-blur-sm border border-gray-200/60 p-4 rounded-xl shadow-md mb-3 cursor-grab active:cursor-grabbing transition-all duration-300 hover:shadow-xl hover:translate-y-[-3px] hover:scale-[1.02] group"
     >
       <div className="flex justify-between items-start">
-        <h3 className="font-pixel text-gray-900 mb-2 leading-relaxed flex-1 pr-2 break-words overflow-wrap-anywhere">
+        <h3 className="font-pixel text-gray-900 mb-2 leading-relaxed flex-1 pr-2 break-words overflow-wrap-anywhere word-break">
           {task.title}
         </h3>
         <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex-shrink-0">
@@ -76,7 +76,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onCopy }) =
         </div>
       </div>
       {task.description && (
-        <p className="font-pixel text-gray-700 text-sm mt-2 leading-relaxed opacity-80 whitespace-pre-wrap break-words">
+        <p className="font-pixel text-gray-700 text-sm mt-2 leading-relaxed opacity-80 whitespace-pre-wrap break-words word-break">
           {task.description}
         </p>
       )}

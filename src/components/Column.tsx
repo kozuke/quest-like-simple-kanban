@@ -41,17 +41,17 @@ const Column: React.FC<ColumnProps> = ({ title, emoji, status, tasks, openAddTas
   };
 
   return (
-    <div className="flex-1 min-w-[280px] max-w-[360px] h-full flex flex-col rounded-xl border shadow-lg overflow-hidden backdrop-blur-sm bg-white/10">
-      <div className={`p-4 border-b border-inherit bg-white/90 backdrop-blur-sm flex items-center justify-between ${columnBg[status]}`}>
-        <div className="flex items-center gap-3">
-          <span className={`inline-flex items-center justify-center h-10 w-10 rounded-full ${emojiStyles[status]} font-pixel text-lg`}>
+    <div className="flex-1 h-full flex flex-col rounded-xl border shadow-lg overflow-hidden backdrop-blur-sm bg-white/10">
+      <div className={`p-4 border-b border-inherit bg-white/90 backdrop-blur-sm flex items-center justify-between ${columnBg[status]} flex-shrink-0`}>
+        <div className="flex items-center gap-3 min-w-0 flex-1">
+          <span className={`inline-flex items-center justify-center h-10 w-10 rounded-full ${emojiStyles[status]} font-pixel text-lg flex-shrink-0`}>
             {emoji}
           </span>
-          <h2 className="font-pixel text-lg font-medium text-gray-800">{title}</h2>
+          <h2 className="font-pixel text-lg font-medium text-gray-800 truncate">{title}</h2>
         </div>
         <button
           onClick={handleAddTask}
-          className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-all duration-200"
+          className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-all duration-200 flex-shrink-0"
         >
           <PlusCircle size={20} />
         </button>
