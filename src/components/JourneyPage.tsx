@@ -229,7 +229,7 @@ const JourneyPage: React.FC<JourneyPageProps> = ({ onNavigateToBoard }) => {
   return (
     <div className="flex flex-col h-screen bg-slate-50">
       {/* Header */}
-      <header className="bg-royal-blue text-white p-4 shadow-md">
+      <header className="bg-royal-blue text-white p-4 shadow-md flex-shrink-0">
         <div className="container mx-auto flex items-center">
           <button
             onClick={onNavigateToBoard}
@@ -249,13 +249,13 @@ const JourneyPage: React.FC<JourneyPageProps> = ({ onNavigateToBoard }) => {
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-y-auto p-6">
-        <div className="container mx-auto max-w-7xl h-full">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
+      {/* Main Content - 縦スクロール対応 */}
+      <main className="flex-1 overflow-y-auto">
+        <div className="container mx-auto max-w-7xl p-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             
             {/* 左側: スライム主役エリア */}
-            <div className={`${backgroundTheme.bg} rounded-xl overflow-hidden shadow-2xl relative min-h-[600px] lg:min-h-full`}>
+            <div className={`${backgroundTheme.bg} rounded-xl overflow-hidden shadow-2xl relative min-h-[600px]`}>
               
               {/* メインコンテンツ */}
               <div className="relative z-10 flex flex-col h-full p-6 text-center">
