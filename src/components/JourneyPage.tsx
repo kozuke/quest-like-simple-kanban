@@ -131,7 +131,7 @@ const JourneyPage: React.FC<JourneyPageProps> = ({ onNavigateToBoard }) => {
         text: '🗓️ 過去7日間のクリア数',
         font: {
           family: "'Press Start 2P', 'DotGothic16', sans-serif",
-          size: 10
+          size: 8
         },
         color: '#374151'
       }
@@ -143,7 +143,7 @@ const JourneyPage: React.FC<JourneyPageProps> = ({ onNavigateToBoard }) => {
           stepSize: 1,
           font: {
             family: "'Press Start 2P', 'DotGothic16', sans-serif",
-            size: 8
+            size: 6
           }
         },
         grid: {
@@ -154,7 +154,7 @@ const JourneyPage: React.FC<JourneyPageProps> = ({ onNavigateToBoard }) => {
         ticks: {
           font: {
             family: "'Press Start 2P', 'DotGothic16', sans-serif",
-            size: 8
+            size: 6
           }
         },
         grid: {
@@ -250,26 +250,26 @@ const JourneyPage: React.FC<JourneyPageProps> = ({ onNavigateToBoard }) => {
         </div>
       </header>
 
-      {/* Main Content - 横並び時は縦スクロール無効、縦並び時は有効 */}
+      {/* Main Content - 横並び時は縦スクロール完全無効、縦並び時は有効 */}
       <main className="flex-1 lg:overflow-hidden overflow-y-auto">
-        <div className="container mx-auto max-w-7xl p-4 lg:p-6 h-full">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 lg:h-full">
+        <div className="container mx-auto max-w-7xl p-3 lg:p-4 h-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4 lg:h-full">
             
             {/* 左側: スライム主役エリア */}
-            <div className={`${backgroundTheme.bg} rounded-xl overflow-hidden shadow-2xl relative min-h-[500px] lg:h-full flex flex-col`}>
+            <div className={`${backgroundTheme.bg} rounded-xl overflow-hidden shadow-2xl relative min-h-[450px] lg:h-full flex flex-col`}>
               
               {/* メインコンテンツ */}
-              <div className="relative z-10 flex flex-col h-full p-4 lg:p-6 text-center">
+              <div className="relative z-10 flex flex-col h-full p-3 lg:p-4 text-center">
                 
                 {/* ヘッダー情報 */}
-                <div className="flex-shrink-0 mb-4 lg:mb-6">
-                  <h2 className="text-2xl lg:text-3xl xl:text-4xl font-pixel text-white drop-shadow-lg mb-2">
+                <div className="flex-shrink-0 mb-3 lg:mb-4">
+                  <h2 className="text-xl lg:text-2xl xl:text-3xl font-pixel text-white drop-shadow-lg mb-1 lg:mb-2">
                     Lv.{currentSlime} スライム
                   </h2>
-                  <p className="text-base lg:text-lg xl:text-xl font-pixel text-white/90 drop-shadow-md mb-1">
+                  <p className="text-sm lg:text-base xl:text-lg font-pixel text-white/90 drop-shadow-md mb-1">
                     {backgroundTheme.title}
                   </p>
-                  <p className="text-sm lg:text-base xl:text-lg font-pixel text-white/80 drop-shadow-md">
+                  <p className="text-xs lg:text-sm xl:text-base font-pixel text-white/80 drop-shadow-md">
                     {backgroundTheme.scene}の住人
                   </p>
                 </div>
@@ -290,7 +290,7 @@ const JourneyPage: React.FC<JourneyPageProps> = ({ onNavigateToBoard }) => {
                       <img 
                         src={`/slime_${previousSlime}.jpg`}
                         alt={`Level ${previousSlime} Slime`}
-                        className="w-48 h-48 lg:w-64 lg:h-64 xl:w-80 xl:h-80 object-contain drop-shadow-2xl opacity-50 absolute animate-evolution"
+                        className="w-40 h-40 lg:w-48 lg:h-48 xl:w-56 xl:h-56 object-contain drop-shadow-2xl opacity-50 absolute animate-evolution"
                       />
                     )}
                     
@@ -298,7 +298,7 @@ const JourneyPage: React.FC<JourneyPageProps> = ({ onNavigateToBoard }) => {
                     <img 
                       src={`/slime_${currentSlime}.jpg`} 
                       alt={`Level ${currentSlime} Slime`}
-                      className={`w-48 h-48 lg:w-64 lg:h-64 xl:w-80 xl:h-80 object-contain drop-shadow-2xl transition-all duration-300 
+                      className={`w-40 h-40 lg:w-48 lg:h-48 xl:w-56 xl:h-56 object-contain drop-shadow-2xl transition-all duration-300 
                                  group-hover:scale-105 ${isEvolving ? 'animate-evolution' : ''} ${slimeAction}`}
                     />
                   </div>
@@ -306,21 +306,21 @@ const JourneyPage: React.FC<JourneyPageProps> = ({ onNavigateToBoard }) => {
                 
                 {/* 進捗情報 */}
                 <div className="flex-shrink-0 w-full max-w-md mx-auto">
-                  <div className="space-y-2 lg:space-y-3 mb-3 lg:mb-4">
-                    <p className="font-pixel text-lg lg:text-xl xl:text-2xl text-white drop-shadow-lg">
+                  <div className="space-y-1 lg:space-y-2 mb-2 lg:mb-3">
+                    <p className="font-pixel text-base lg:text-lg xl:text-xl text-white drop-shadow-lg">
                       {totalCleared}個のタスクをクリア！
                     </p>
                     {nextGoal !== Infinity && (
-                      <p className="font-pixel text-xs lg:text-sm xl:text-lg text-white/90 drop-shadow-md">
+                      <p className="font-pixel text-xs lg:text-sm xl:text-base text-white/90 drop-shadow-md">
                         次の進化まで: {nextGoal - totalCleared}個
                       </p>
                     )}
                   </div>
                   
                   {/* 進捗バー */}
-                  <div className="bg-white/30 rounded-full h-2 lg:h-3 xl:h-4 backdrop-blur-sm border border-white/40 mb-3 lg:mb-4">
+                  <div className="bg-white/30 rounded-full h-2 lg:h-3 backdrop-blur-sm border border-white/40 mb-2 lg:mb-3">
                     <div 
-                      className="bg-gradient-to-r from-yellow-400 to-orange-500 h-2 lg:h-3 xl:h-4 rounded-full transition-all duration-500 shadow-inner"
+                      className="bg-gradient-to-r from-yellow-400 to-orange-500 h-2 lg:h-3 rounded-full transition-all duration-500 shadow-inner"
                       style={{ 
                         width: nextGoal !== Infinity ? `${((totalCleared % (nextGoal === 10 ? 10 : nextGoal === 20 ? 10 : nextGoal === 50 ? 30 : 50)) / (nextGoal === 10 ? 10 : nextGoal === 20 ? 10 : nextGoal === 50 ? 30 : 50)) * 100}%` : '100%'
                       }}
@@ -329,15 +329,15 @@ const JourneyPage: React.FC<JourneyPageProps> = ({ onNavigateToBoard }) => {
                   
                   {/* 経験値反映ボタン */}
                   {completedTasksCount > 0 && (
-                    <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-3 lg:p-4 w-full">
-                      <p className="font-pixel text-xs lg:text-sm xl:text-base text-white drop-shadow-md mb-2 lg:mb-3">
+                    <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-2 lg:p-3 w-full">
+                      <p className="font-pixel text-xs lg:text-sm text-white drop-shadow-md mb-2">
                         {completedTasksCount}個の完了タスクがあります
                       </p>
                       <button
                         onClick={handleClaimAllExp}
-                        className="bg-yellow-500 hover:bg-yellow-600 text-white font-pixel px-3 py-2 lg:px-4 lg:py-2 xl:px-6 xl:py-3 rounded-lg transition-all duration-200 flex items-center gap-2 mx-auto text-xs lg:text-sm xl:text-base shadow-lg hover:shadow-xl transform hover:scale-105"
+                        className="bg-yellow-500 hover:bg-yellow-600 text-white font-pixel px-3 py-1 lg:px-4 lg:py-2 rounded-lg transition-all duration-200 flex items-center gap-1 lg:gap-2 mx-auto text-xs lg:text-sm shadow-lg hover:shadow-xl transform hover:scale-105"
                       >
-                        <Star size={14} className="lg:w-4 lg:h-4 xl:w-5 xl:h-5" />
+                        <Star size={12} className="lg:w-4 lg:h-4" />
                         経験値を反映する
                       </button>
                     </div>
@@ -351,76 +351,76 @@ const JourneyPage: React.FC<JourneyPageProps> = ({ onNavigateToBoard }) => {
               
               {/* 統計エリアヘッダー - インラインスタイルで強制的に背景色を適用 */}
               <div 
-                className="text-white p-4 lg:p-6 flex-shrink-0"
+                className="text-white p-3 lg:p-4 flex-shrink-0"
                 style={{
                   background: 'linear-gradient(to right, #3b82f6, #9333ea)',
                   backgroundColor: '#3b82f6'
                 }}
               >
                 <div className="flex justify-between items-center">
-                  <h3 className="text-xl lg:text-2xl font-pixel text-white">冒険の記録</h3>
+                  <h3 className="text-lg lg:text-xl font-pixel text-white">冒険の記録</h3>
                   <div className="flex gap-2">
                     <button
                       onClick={() => setShowPastTasks(true)}
-                      className="p-2 text-white/80 hover:text-white hover:bg-white/20 rounded-lg transition-all duration-200"
+                      className="p-1.5 lg:p-2 text-white/80 hover:text-white hover:bg-white/20 rounded-lg transition-all duration-200"
                       title="過去のタスクを表示"
                     >
-                      <History size={18} className="lg:w-5 lg:h-5" />
+                      <History size={16} className="lg:w-5 lg:h-5" />
                     </button>
                     <button
                       onClick={handleResetClick}
-                      className="p-2 text-white/80 hover:text-white hover:bg-white/20 rounded-lg transition-all duration-200"
+                      className="p-1.5 lg:p-2 text-white/80 hover:text-white hover:bg-white/20 rounded-lg transition-all duration-200"
                       title="記録をリセット"
                     >
-                      <RefreshCw size={18} className="lg:w-5 lg:h-5" />
+                      <RefreshCw size={16} className="lg:w-5 lg:h-5" />
                     </button>
                   </div>
                 </div>
               </div>
 
-              {/* 統計カード */}
-              <div className="p-4 lg:p-6 space-y-4 lg:space-y-6 flex-1 overflow-y-auto">
+              {/* 統計カード - 縦スクロール完全無効 */}
+              <div className="p-3 lg:p-4 space-y-3 lg:space-y-4 flex-1 overflow-hidden flex flex-col">
                 
-                {/* 統計グリッド */}
-                <div className="grid grid-cols-2 gap-3 lg:gap-4">
-                  <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-3 lg:p-4 rounded-lg border border-blue-200">
+                {/* 統計グリッド - コンパクト化 */}
+                <div className="grid grid-cols-2 gap-2 lg:gap-3 flex-shrink-0">
+                  <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-2 lg:p-3 rounded-lg border border-blue-200">
                     <div className="text-center">
-                      <div className="text-2xl lg:text-3xl mb-1 lg:mb-2">🏆</div>
-                      <div className="font-pixel text-xs lg:text-sm text-blue-600">総クリア数</div>
-                      <div className="font-pixel text-lg lg:text-2xl text-blue-800">{totalCleared}</div>
+                      <div className="text-lg lg:text-2xl mb-1">🏆</div>
+                      <div className="font-pixel text-xs text-blue-600">総クリア数</div>
+                      <div className="font-pixel text-sm lg:text-lg text-blue-800">{totalCleared}</div>
                     </div>
                   </div>
                   
-                  <div className="bg-gradient-to-br from-green-50 to-green-100 p-3 lg:p-4 rounded-lg border border-green-200">
+                  <div className="bg-gradient-to-br from-green-50 to-green-100 p-2 lg:p-3 rounded-lg border border-green-200">
                     <div className="text-center">
-                      <div className="text-2xl lg:text-3xl mb-1 lg:mb-2">⭐</div>
-                      <div className="font-pixel text-xs lg:text-sm text-green-600">現在レベル</div>
-                      <div className="font-pixel text-lg lg:text-2xl text-green-800">Lv.{currentSlime}</div>
+                      <div className="text-lg lg:text-2xl mb-1">⭐</div>
+                      <div className="font-pixel text-xs text-green-600">現在レベル</div>
+                      <div className="font-pixel text-sm lg:text-lg text-green-800">Lv.{currentSlime}</div>
                     </div>
                   </div>
 
-                  <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-3 lg:p-4 rounded-lg border border-purple-200">
+                  <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-2 lg:p-3 rounded-lg border border-purple-200">
                     <div className="text-center">
-                      <div className="text-2xl lg:text-3xl mb-1 lg:mb-2">🔥</div>
-                      <div className="font-pixel text-xs lg:text-sm text-purple-600">今週のクリア</div>
-                      <div className="font-pixel text-lg lg:text-2xl text-purple-800">
+                      <div className="text-lg lg:text-2xl mb-1">🔥</div>
+                      <div className="font-pixel text-xs text-purple-600">今週のクリア</div>
+                      <div className="font-pixel text-sm lg:text-lg text-purple-800">
                         {last7Days.reduce((sum, date) => sum + (clearedTasks[date]?.count || 0), 0)}
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-3 lg:p-4 rounded-lg border border-orange-200">
+                  <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-2 lg:p-3 rounded-lg border border-orange-200">
                     <div className="text-center">
-                      <div className="text-2xl lg:text-3xl mb-1 lg:mb-2">⚡</div>
-                      <div className="font-pixel text-xs lg:text-sm text-orange-600">待機中</div>
-                      <div className="font-pixel text-lg lg:text-2xl text-orange-800">{completedTasksCount}</div>
+                      <div className="text-lg lg:text-2xl mb-1">⚡</div>
+                      <div className="font-pixel text-xs text-orange-600">待機中</div>
+                      <div className="font-pixel text-sm lg:text-lg text-orange-800">{completedTasksCount}</div>
                     </div>
                   </div>
                 </div>
 
-                {/* グラフエリア */}
-                <div className="bg-gray-50 rounded-xl p-4 lg:p-6 border flex-1 min-h-0">
-                  <div className="h-48 lg:h-64 xl:h-80">
+                {/* グラフエリア - 残りスペースを全て使用 */}
+                <div className="bg-gray-50 rounded-xl p-2 lg:p-3 border flex-1 min-h-0">
+                  <div className="h-full min-h-[120px]">
                     <Bar data={chartData} options={chartOptions} />
                   </div>
                 </div>
