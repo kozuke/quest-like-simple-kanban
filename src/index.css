@@ -201,3 +201,10 @@ html, body {
 .animate-slime-heart {
   animation: slime-heart 0.5s ease-in-out;
 }
+
+/* 長いテキストの改行対応 */
+.word-break {
+  word-break: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}

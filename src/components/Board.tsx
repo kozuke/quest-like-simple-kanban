@@ -117,9 +117,9 @@ const Board: React.FC<BoardProps> = ({ openAddTaskModal, onEditTask, onDeleteTas
       onDragEnd={handleDragEnd}
     >
       <div className="flex flex-col h-full">
-        {/* Centered horizontal scrollable container */}
-        <div className="flex-1 overflow-x-auto overflow-y-hidden">
-          <div className="flex gap-6 p-6 min-w-max h-full justify-center">
+        {/* 横スクロール完全無効、3カラム固定レイアウト */}
+        <div className="flex-1 overflow-hidden">
+          <div className="flex gap-4 p-4 h-full">
             <Column 
               title="クエスト" 
               emoji="🗺️" 
