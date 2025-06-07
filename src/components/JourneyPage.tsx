@@ -131,9 +131,14 @@ const JourneyPage: React.FC<JourneyPageProps> = ({ onNavigateToBoard }) => {
         text: '🗓️ 過去7日間のクリア数',
         font: {
           family: "'Press Start 2P', 'DotGothic16', sans-serif",
-          size: 8
+          size: 12,
+          weight: 'bold'
         },
-        color: '#374151'
+        color: '#1f2937',
+        padding: {
+          top: 10,
+          bottom: 20
+        }
       }
     },
     scales: {
@@ -143,23 +148,59 @@ const JourneyPage: React.FC<JourneyPageProps> = ({ onNavigateToBoard }) => {
           stepSize: 1,
           font: {
             family: "'Press Start 2P', 'DotGothic16', sans-serif",
-            size: 6
-          }
+            size: 10,
+            weight: 'bold'
+          },
+          color: '#374151'
         },
         grid: {
-          color: '#e5e7eb'
+          color: '#e5e7eb',
+          lineWidth: 1
+        },
+        title: {
+          display: true,
+          text: 'クリア数',
+          font: {
+            family: "'Press Start 2P', 'DotGothic16', sans-serif",
+            size: 10,
+            weight: 'bold'
+          },
+          color: '#374151'
         }
       },
       x: {
         ticks: {
           font: {
             family: "'Press Start 2P', 'DotGothic16', sans-serif",
-            size: 6
-          }
+            size: 10,
+            weight: 'bold'
+          },
+          color: '#374151',
+          maxRotation: 0,
+          minRotation: 0
         },
         grid: {
-          color: '#e5e7eb'
+          color: '#e5e7eb',
+          lineWidth: 1
+        },
+        title: {
+          display: true,
+          text: '日付',
+          font: {
+            family: "'Press Start 2P', 'DotGothic16', sans-serif",
+            size: 10,
+            weight: 'bold'
+          },
+          color: '#374151'
         }
+      }
+    },
+    layout: {
+      padding: {
+        top: 10,
+        bottom: 10,
+        left: 10,
+        right: 10
       }
     }
   };
@@ -419,8 +460,8 @@ const JourneyPage: React.FC<JourneyPageProps> = ({ onNavigateToBoard }) => {
                 </div>
 
                 {/* グラフエリア - 残りスペースを全て使用 */}
-                <div className="bg-gray-50 rounded-xl p-2 lg:p-3 border flex-1 min-h-0">
-                  <div className="h-full min-h-[120px]">
+                <div className="bg-gray-50 rounded-xl p-3 lg:p-4 border flex-1 min-h-0">
+                  <div className="h-full min-h-[160px]">
                     <Bar data={chartData} options={chartOptions} />
                   </div>
                 </div>
