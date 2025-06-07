@@ -28,7 +28,7 @@ interface JourneyPageProps {
 }
 
 const JourneyPage: React.FC<JourneyPageProps> = ({ onNavigateToBoard }) => {
-  const { clearedTasks, resetJourney } = useJourneyStore();
+  const { clearedTasks, resetJourney, addClearedTask } = useJourneyStore();
   const { claimAllExp, columnOrder, tasks } = useTaskStore();
   const [currentSlime, setCurrentSlime] = useState(1);
   const [nextGoal, setNextGoal] = useState(10);
@@ -114,7 +114,19 @@ const JourneyPage: React.FC<JourneyPageProps> = ({ onNavigateToBoard }) => {
   };
 
   const handleClaimAllExp = () => {
+    // 完了タスクを取得してJourneyStoreに追加
+    const completedTasks = columnOrder.done
+      .map(id => tasks[id])
+      .filter(task => task && !task.expClaimed);
+
+    // 各タスクをJourneyStoreに追加
+    completedTasks.forEach(task => {
+      addClearedTask(task);
+    });
+
+    // TaskStoreから経験値を反映（タスクを削除）
     const claimedCount = claimAllExp();
+    
     if (claimedCount > 0) {
       // 進化演出のトリガー
       const newTotal = totalCleared + claimedCount;
