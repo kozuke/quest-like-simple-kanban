@@ -13,7 +13,7 @@ import {
 import { useJourneyStore } from '../store/useJourneyStore';
 import { useTaskStore } from '../store/useTaskStore';
 import { useAudioStore } from '../store/useAudioStore';
-import { playSound, playComplexSound } from '../utils/audio';
+import { playSound, playComplexSound, playDeleteSound } from '../utils/audio';
 import PastTasksModal from './PastTasksModal';
 
 ChartJS.register(
@@ -218,6 +218,8 @@ const JourneyPage: React.FC<JourneyPageProps> = ({ onNavigateToBoard }) => {
   };
 
   const handleConfirmReset = () => {
+    // リセット確認時に削除音を再生
+    playDeleteSound();
     resetJourney();
     setShowConfirm(false);
   };

@@ -12,6 +12,7 @@ import {
 import { useJourneyStore } from '../store/useJourneyStore';
 import { useTaskStore } from '../store/useTaskStore';
 import { RefreshCw, Star, History } from 'lucide-react';
+import { playDeleteSound } from '../utils/audio';
 import PastTasksModal from './PastTasksModal';
 
 ChartJS.register(
@@ -105,6 +106,8 @@ const SlimeDashboard: React.FC = () => {
   };
 
   const handleConfirmReset = () => {
+    // リセット確認時に削除音を再生
+    playDeleteSound();
     resetJourney();
     setShowConfirm(false);
   };

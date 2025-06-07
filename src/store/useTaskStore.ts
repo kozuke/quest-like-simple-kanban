@@ -90,7 +90,12 @@ export const useTaskStore = create<TaskStore>()(
             return state;
           }
           
-          playMoveSound();
+          // クリアボードに移動した場合はファンファーレ、それ以外は移動音
+          if (destination === 'done' && sourceStatus !== 'done') {
+            playFanfareSound();
+          } else {
+            playMoveSound();
+          }
           
           const newColumnOrder = {
             ...state.columnOrder,
