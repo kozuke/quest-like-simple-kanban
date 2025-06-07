@@ -14,6 +14,7 @@ interface DailyRecord {
 interface JourneyStore {
   clearedTasks: Record<string, DailyRecord>;
   addClearedTask: (task: Task) => void;
+  removeClearedTask: (date: string, taskIndex: number) => void;
   resetJourney: () => void;
   loadFromLocalStorage: () => void;
   saveToLocalStorage: () => void;
@@ -41,6 +42,40 @@ export const useJourneyStore = create<JourneyStore>((set, get) => ({
         clearedTasks: {
           ...state.clearedTasks,
           [today]: updatedRecord
+        }
+      };
+    });
+
+    get().saveToLocalStorage();
+  },
+
+  removeClearedTask: (date: string, taskIndex: number) => {
+    set(state => {
+      const record = state.clearedTasks[date];
+      if (!record || taskIndex < 0 || taskIndex >= record.tasks.length) {
+        return state;
+      }
+
+      const newTasks = [...record.tasks];
+      newTasks.splice(taskIndex, 1);
+
+      const updatedRecord = {
+        count: Math.max(0, record.count - 1),
+        tasks: newTasks
+      };
+
+      // If no tasks left for this date, remove the entire record
+      if (updatedRecord.count === 0) {
+        const { [date]: removed, ...remainingTasks } = state.clearedTasks;
+        return {
+          clearedTasks: remainingTasks
+        };
+      }
+
+      return {
+        clearedTasks: {
+          ...state.clearedTasks,
+          [date]: updatedRecord
         }
       };
     });

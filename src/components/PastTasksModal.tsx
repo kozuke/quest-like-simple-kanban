@@ -1,6 +1,9 @@
 import React from 'react';
-import { X, Calendar } from 'lucide-react';
+import { X, Calendar, RotateCcw } from 'lucide-react';
 import { useJourneyStore } from '../store/useJourneyStore';
+import { useTaskStore } from '../store/useTaskStore';
+import { useAudioStore } from '../store/useAudioStore';
+import { playAddTaskSound } from '../utils/audio';
 
 interface PastTasksModalProps {
   isOpen: boolean;
@@ -8,7 +11,9 @@ interface PastTasksModalProps {
 }
 
 const PastTasksModal: React.FC<PastTasksModalProps> = ({ isOpen, onClose }) => {
-  const { clearedTasks } = useJourneyStore();
+  const { clearedTasks, removeClearedTask } = useJourneyStore();
+  const { addTask } = useTaskStore();
+  const { getVolumeValue } = useAudioStore();
 
   if (!isOpen) return null;
 
@@ -20,6 +25,17 @@ const PastTasksModal: React.FC<PastTasksModalProps> = ({ isOpen, onClose }) => {
       day: 'numeric',
       weekday: 'long'
     });
+  };
+
+  const handleRestoreTask = (date: string, taskIndex: number, task: any) => {
+    // タスクをクリアボードに復元
+    addTask(task.title, task.description || '', 'backlog');
+    
+    // 過去タスクから削除
+    removeClearedTask(date, taskIndex);
+    
+    // 効果音再生
+    playAddTaskSound();
   };
 
   // Sort dates in descending order
@@ -69,16 +85,30 @@ const PastTasksModal: React.FC<PastTasksModalProps> = ({ isOpen, onClose }) => {
                     {record.tasks.map((task, index) => (
                       <div 
                         key={`${date}-${index}`}
-                        className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow duration-200"
+                        className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow duration-200 group"
                       >
-                        <h4 className="font-pixel text-gray-900 mb-2">
-                          {task.title}
-                        </h4>
-                        {task.description && (
-                          <p className="text-gray-600 text-sm whitespace-pre-wrap pl-4 border-l-2 border-gray-200">
-                            {task.description}
-                          </p>
-                        )}
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <h4 className="font-pixel text-gray-900 mb-2">
+                              {task.title}
+                            </h4>
+                            {task.description && (
+                              <p className="text-gray-600 text-sm whitespace-pre-wrap pl-4 border-l-2 border-gray-200">
+                                {task.description}
+                              </p>
+                            )}
+                          </div>
+                          
+                          {/* 復元ボタン */}
+                          <button
+                            onClick={() => handleRestoreTask(date, index, task)}
+                            className="ml-4 p-2 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-all duration-200 opacity-0 group-hover:opacity-100 flex items-center gap-1"
+                            title="クリアボードに戻す"
+                          >
+                            <RotateCcw size={16} />
+                            <span className="text-xs font-medium">復元</span>
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -86,6 +116,12 @@ const PastTasksModal: React.FC<PastTasksModalProps> = ({ isOpen, onClose }) => {
               ))}
             </div>
           )}
+        </div>
+
+        <div className="p-4 border-t border-gray-200 bg-gray-50 text-center">
+          <p className="text-xs text-gray-500">
+            💡 各タスクにマウスを合わせると復元ボタンが表示されます
+          </p>
         </div>
       </div>
     </div>
