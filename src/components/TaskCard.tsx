@@ -1,10 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Pencil, Trash2, Copy } from 'lucide-react';
 import { Task } from '../types/task';
-import { useTaskStore } from '../store/useTaskStore';
-import { useJourneyStore } from '../store/useJourneyStore';
 
 interface TaskCardProps {
   task: Task;
@@ -14,10 +12,6 @@ interface TaskCardProps {
 }
 
 const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onCopy }) => {
-  const [isDisappearing, setIsDisappearing] = useState(false);
-  const { claimExp } = useTaskStore();
-  const { addClearedTask } = useJourneyStore();
-  
   const {
     attributes,
     listeners,
@@ -48,38 +42,6 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onCopy }) =
     onCopy(task.id);
   };
 
-  const handleClaimExp = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsDisappearing(true);
-    
-    // Add task to journey record
-    addClearedTask(task);
-    
-    // Wait for the animation to complete
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
-    claimExp(task.id);
-    onDelete(task.id);
-  };
-
-  if (isDisappearing) {
-    return (
-      <div 
-        className="relative bg-white/95 backdrop-blur-sm border border-gray-200/60 p-4 rounded-xl shadow-md mb-3 animate-disappear"
-      >
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="animate-sparkle">✨</div>
-        </div>
-        <div className="opacity-0">
-          <h3 className="font-pixel text-gray-900 mb-2">{task.title}</h3>
-          {task.description && (
-            <p className="font-pixel text-gray-700 text-sm mt-2">{task.description}</p>
-          )}
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div 
       ref={setNodeRef} 
@@ -93,19 +55,6 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onCopy }) =
           {task.title}
         </h3>
         <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex-shrink-0">
-          {task.status === 'done' && !task.expClaimed && (
-            <button 
-              onClick={handleClaimExp}
-              className="p-1.5 hover:bg-yellow-50 rounded-lg transition-all duration-200"
-              title="経験値を獲得"
-            >
-              <img 
-                src="/exp_icon.png" 
-                alt="経験値を獲得" 
-                className="w-4 h-4"
-              />
-            </button>
-          )}
           <button 
             onClick={handleEdit}
             className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-all duration-200"

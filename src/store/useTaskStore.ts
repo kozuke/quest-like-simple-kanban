@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Task, TaskStatus, TaskStore } from '../types/task';
-import { useJourneyStore } from './useJourneyStore';
 import { playAddTaskSound, playDeleteSound, playMoveSound, playFanfareSound } from '../utils/audio';
 
 export const useTaskStore = create<TaskStore>()(
@@ -171,9 +170,7 @@ export const useTaskStore = create<TaskStore>()(
       },
       
       claimAllExp: () => {
-        const { addClearedTask } = useJourneyStore.getState();
-        
-        let totalExp = 0;
+        let claimedCount = 0;
         
         set((state) => {
           const doneTasks = state.columnOrder.done
@@ -182,14 +179,11 @@ export const useTaskStore = create<TaskStore>()(
           
           if (doneTasks.length === 0) return state;
           
-          // Add tasks to journey record and calculate total exp
-          doneTasks.forEach(task => {
-            addClearedTask(task);
-          });
+          claimedCount = doneTasks.length;
           
           playFanfareSound();
           
-          // Remove claimed tasks
+          // Remove claimed tasks from the board
           const newTasks = { ...state.tasks };
           doneTasks.forEach(task => {
             delete newTasks[task.id];
@@ -204,7 +198,7 @@ export const useTaskStore = create<TaskStore>()(
           };
         });
         
-        return totalExp;
+        return claimedCount;
       }
     }),
     {
