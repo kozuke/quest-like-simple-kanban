@@ -290,7 +290,7 @@ const JourneyPage: React.FC<JourneyPageProps> = ({ onNavigateToBoard }) => {
                       <img 
                         src={`/slime_${previousSlime}.jpg`}
                         alt={`Level ${previousSlime} Slime`}
-                        className="w-40 h-40 lg:w-48 lg:h-48 xl:w-56 xl:h-56 object-contain drop-shadow-2xl opacity-50 absolute animate-evolution"
+                        className="w-56 h-56 lg:w-72 lg:h-72 xl:w-80 xl:h-80 object-contain drop-shadow-2xl opacity-50 absolute animate-evolution"
                       />
                     )}
                     
@@ -298,7 +298,7 @@ const JourneyPage: React.FC<JourneyPageProps> = ({ onNavigateToBoard }) => {
                     <img 
                       src={`/slime_${currentSlime}.jpg`} 
                       alt={`Level ${currentSlime} Slime`}
-                      className={`w-40 h-40 lg:w-48 lg:h-48 xl:w-56 xl:h-56 object-contain drop-shadow-2xl transition-all duration-300 
+                      className={`w-56 h-56 lg:w-72 lg:h-72 xl:w-80 xl:h-80 object-contain drop-shadow-2xl transition-all duration-300 
                                  group-hover:scale-105 ${isEvolving ? 'animate-evolution' : ''} ${slimeAction}`}
                     />
                   </div>
